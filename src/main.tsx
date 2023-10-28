@@ -1,10 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { OwnReactComponent } from "./ownReact/OwnReactComponent";
+import { App } from "./app/App.jsx";
+import { renderDom } from "./ownReact/renderDom";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const root = document.getElementById("root");
+
+// eslint-disable-next-line react/no-deprecated
+renderDom({ element: <App />, container: root });
