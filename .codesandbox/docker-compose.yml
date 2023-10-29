@@ -1,8 +1,0 @@
-version: '3'
-services:
-  bun:
-    image: oven/bun:1-debian
-    volumes:
-      - ../:/workspace
-    environment:
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun/bin

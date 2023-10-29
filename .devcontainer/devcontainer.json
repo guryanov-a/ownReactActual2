@@ -1,0 +1,7 @@
+{
+  "name": "Devcontainer",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  "features": {
+    "ghcr.io/shyim/devcontainers-features/bun": {}
+  }
+}
