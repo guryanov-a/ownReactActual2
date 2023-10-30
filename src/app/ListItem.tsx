@@ -7,6 +7,6 @@ import { OwnReactComponent } from "../ownReact/OwnReactComponent";
  */
 export class ListItem extends OwnReactComponent {
   render() {
-    return <li>{this.props.children}</li>;
+    return <li key={this.props.key}>{this.props.children}</li>;
   }
 }
