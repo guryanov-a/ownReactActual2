@@ -7,7 +7,7 @@ import {
 import { createInstance } from "../createInstance";
 import { removeInstance } from "../removeInstance";
 import { updateInstance } from "../updateInstance";
-import { updateComponentInstance } from "../updateComponentInstance";
+import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
 
