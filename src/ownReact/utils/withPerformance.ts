@@ -44,10 +44,10 @@ const getElementName = (element) => {
   }
 
   return element.type;
-}
+};
 
-export function withPerformanceUpdate(fn, name = fn.name) {
-  return function(args) {
+function withPerformanceUpdate(fn, name = fn.name) {
+  return function (args) {
     const element = args?.instance?.element ?? args?.element;
     const id = element.__id ?? element.__id;
     const elementName = getElementName(element);
@@ -59,18 +59,17 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       // (it's not 100% accurate but the actual DOM update in a browser happens asyncronically after a code run anyway)
       // TODO: check that it works as intended
       window.requestAnimationFrame(() => {
-
         performance.mark(`${name}/${elementName} end reconciliation (${id})`);
 
         const reconciliationPerformanceMeasurement = performance.measure(
           `${name}/${elementName} reconciliation (${id})`,
           `${name}/${elementName} start reconciliation (${id})`,
-          `${name}/${elementName} end reconciliation (${id})`
+          `${name}/${elementName} end reconciliation (${id})`,
         );
         const domUpdateMeasurement = performance.measure(
           `${elementName} DOM update (${id})`,
           `${elementName} start DOM update (${id})`,
-          `${elementName} end DOM update (${id})`
+          `${elementName} end DOM update (${id})`,
         );
 
         const checksPerformanceDuration =
@@ -78,12 +77,14 @@ export function withPerformanceUpdate(fn, name = fn.name) {
           domUpdateMeasurement.duration;
 
         console.log(
-          `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}`
+          `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}`,
         );
         console.log(
-          `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}`
+          `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}`,
         );
-        console.log(`${name}/${elementName} checks: ${checksPerformanceDuration}`);
+        console.log(
+          `${name}/${elementName} checks: ${checksPerformanceDuration}`,
+        );
       });
     });
 
@@ -91,8 +92,8 @@ export function withPerformanceUpdate(fn, name = fn.name) {
   };
 }
 
-export function withPerformanceDomChange(fn) {
-  return function(args) {
+function withPerformanceDomChange(fn) {
+  return function (args) {
     const element = args?.instance?.element ?? args?.element;
     const id = element.__id ?? element.__id;
 
@@ -108,12 +109,28 @@ export function withPerformanceDomChange(fn) {
       const domUpdateMeasurement = performance.measure(
         `${elementName} DOM update (${id})`,
         `${elementName} start DOM update (${id})`,
-        `${elementName} end DOM update (${id})`
+        `${elementName} end DOM update (${id})`,
       );
 
-      console.log(`${elementName} DOM update took: ${domUpdateMeasurement.duration} (${id})`);
+      console.log(
+        `${elementName} DOM update took: ${domUpdateMeasurement.duration} (${id})`,
+      );
     });
 
     return result;
   };
 }
+
+const testOrProductionEnv =
+  process.env.VITEST === "test" || process.env.NODE_ENV === "production";
+const withPerformanceUpdateExport = testOrProductionEnv
+  ? withPerformanceUpdate
+  : (fn) => fn;
+const withPerformanceDomChangeExport = testOrProductionEnv
+  ? withPerformanceDomChange
+  : (fn) => fn;
+
+export {
+  withPerformanceUpdateExport as withPerformanceUpdate,
+  withPerformanceDomChangeExport as withPerformanceDomChange,
+};

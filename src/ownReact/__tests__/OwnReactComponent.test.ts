@@ -1,18 +1,17 @@
 import { OwnReactComponent, InvalidChildError } from "../OwnReactComponent";
 import { updateComponent } from "../updateComponent";
 
-jest.mock("../updateComponent");
+vi.mock("../updateComponent");
 
 describe("ownReactComponent", () => {
-  it("constructor", () => {
-    expect.hasAssertions();
+  test("constructor", () => {
     const component = new OwnReactComponent();
     expect(component.props).toStrictEqual({});
     expect(component.state).toStrictEqual({});
   });
 
   describe("setState", () => {
-    it("object", () => {
+    test("object", () => {
       expect.hasAssertions();
       const component = new OwnReactComponent();
       component.__internalInstance = {
@@ -44,7 +43,7 @@ describe("ownReactComponent", () => {
       );
     });
 
-    it("function", () => {
+    test("function", () => {
       expect.hasAssertions();
       const component = new OwnReactComponent();
       component.__internalInstance = {
@@ -79,7 +78,7 @@ describe("ownReactComponent", () => {
   });
 
   describe("createElement", () => {
-    it("object child", () => {
+    test("object child", () => {
       expect.hasAssertions();
       const element = OwnReactComponent.createElement(
         "div",
@@ -102,7 +101,7 @@ describe("ownReactComponent", () => {
       });
     });
 
-    it("string", () => {
+    test("string", () => {
       expect.hasAssertions();
       const element = OwnReactComponent.createElement(
         "div",
@@ -125,9 +124,9 @@ describe("ownReactComponent", () => {
       });
     });
 
-    it("invalidChildError", () => {
+    test("invalidChildError", () => {
       expect.hasAssertions();
-      jest.spyOn(console, "error").mockImplementation();
+      vi.spyOn(console, "error").mockImplementation();
       const element = OwnReactComponent.createElement("div", { id: "test" }, 1);
 
       expect(element).toStrictEqual({

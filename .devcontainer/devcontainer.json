@@ -1,7 +1,7 @@
 {
   "name": "Devcontainer",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:18-bullseye",
   "features": {
-    "ghcr.io/shyim/devcontainers-features/bun": {}
+    "ghcr.io/shyim/devcontainers-features/bun:0": {}
   }
 }

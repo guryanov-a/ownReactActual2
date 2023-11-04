@@ -1,8 +1,7 @@
 import { removeInstance } from "../removeInstance";
 
 describe("removeInstance", () => {
-  it("should remove instance from parent instance", () => {
-    expect.hasAssertions();
+  test("should remove instance from parent instance", () => {
     const parentDom = document.createElement("div");
     const instance = {
       dom: document.createElement("div")

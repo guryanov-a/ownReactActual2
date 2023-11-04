@@ -76,7 +76,7 @@ export class ListManualUpdate extends OwnReactComponent {
   handleFilterChange(event) {
     const newLettersToFilter = event.target.value;
     const newUnchangingLetters = new Set(
-      event.target.value.toUpperCase().split("")
+      event.target.value.toUpperCase().spltest("")
     );
 
     this.setState({

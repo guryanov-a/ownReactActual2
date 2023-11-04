@@ -1,13 +1,11 @@
 import { renderDom } from "../renderDom";
 import { reconcile } from "../reconciliation/reconcile";
-import { OwnReactComponent } from "../OwnReactComponent";
 
-jest.mock("../reconciliation/reconcile");
+vi.mock("../reconciliation/reconcile");
 
 describe("renderDom", () => {
-  it("renderDom", () => {
-    expect.hasAssertions();
-    const Component = jest.fn();
+  test("renderDom", () => {
+    const Component = mock();
 
     const container = {
       tagName: "container"

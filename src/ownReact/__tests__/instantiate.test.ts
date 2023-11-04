@@ -86,7 +86,7 @@ describe("instantiate", () => {
     }
     vi.spyOn(MockClassComponent.prototype, "render");
     const isPrototypeOfSpy = vi
-      .spyOn(OwnReactComponent, "isPrototypeOf")
+     vi.spyOn((OwnReactComponent, "isPrototypeOf")
       .mockReturnValue(true);
 
     createPublicInstance.mockImplementation(() => new MockClassComponent());
@@ -121,7 +121,7 @@ describe("instantiate", () => {
     };
 
     const consoleErrorSpy = vi
-      .spyOn(console, "error")
+     vi.spyOn((console, "error")
       .mockImplementationOnce(() => {});
     const result = instantiate(element);
 
@@ -152,7 +152,7 @@ describe("instantiate", () => {
       "error: wrong input with input = %p",
       (initialElement, expectedType) => {
         const consoleErrorSpy = vi
-          .spyOn(console, "error")
+         vi.spyOn((console, "error")
           .mockImplementationOnce(() => {});
         const result = instantiate(initialElement);
 

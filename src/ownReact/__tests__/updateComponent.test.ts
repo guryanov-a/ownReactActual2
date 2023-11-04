@@ -1,10 +1,10 @@
 import { updateComponent } from "../updateComponent";
 import { reconcile } from "../reconciliation/reconcile";
 
-jest.mock("../reconciliation/reconcile");
+vi.mock("../reconciliation/reconcile");
 
 describe("updateComponent", () => {
-  it("updateComponent", () => {
+  test("updateComponent", () => {
     expect.hasAssertions();
     const element = {
       type: "div"

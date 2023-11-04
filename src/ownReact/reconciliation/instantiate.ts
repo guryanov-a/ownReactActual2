@@ -5,6 +5,54 @@ import { OwnReactComponent } from "../OwnReactComponent";
 export class InvalidTypeError extends Error {}
 export class InvalidInputError extends Error {}
 
+const instantiateClassComponent = element => {
+  // create instance of a component
+  const instance = {};
+  const publicInstance = createPublicInstance(element, instance);
+  const childElement = publicInstance.render();
+  const childInstance = instantiate(childElement);
+  const { dom } = childInstance;
+
+  Object.assign(instance, {
+    dom,
+    element,
+    childInstance,
+    publicInstance
+  });
+
+  return instance;
+}
+
+const instantiateDomElement = element => {
+  const { type, props = {} } = element;
+  const domElement = document.createElement(type);
+  const dom = updateDomProperties(domElement, [], props);
+
+  const children = props.children ? props.children : [];
+  const childrenArr = Array.isArray(children) ? children : [children];
+  const childInstances = childrenArr.map(instantiate);
+  const childDoms = childInstances.map(childInstance => childInstance.dom);
+  childDoms.forEach(childDom => dom.appendChild(childDom));
+
+  const instance = {
+    dom,
+    element,
+    childInstances
+  };
+  return instance;
+}
+
+const instantiateTextElement = element => {
+  const { props = {} } = element;
+  const dom = document.createTextNode(props.nodeValue);
+  const instance = {
+    dom,
+    element,
+    childInstances: []
+  };
+  return instance;
+};
+
 /**
  * Instantiate a component
  * @param {Function} type
@@ -26,37 +74,15 @@ export default function instantiate(element) {
     return;
   }
 
-  const { type, props = {} } = element;
+  const { type } = element;
   const isDomElement = typeof type === "string";
 
   if (type === "TEXT ELEMENT") {
-    // create text element
-    const dom = document.createTextNode(props.nodeValue);
-    const instance = {
-      dom,
-      element,
-      childInstances: []
-    };
-    return instance;
+    instantiateTextElement(element);
   }
 
   if (isDomElement) {
-    // create DOM element
-    const domElement = document.createElement(type);
-    const dom = updateDomProperties(domElement, [], props);
-
-    const children = props.children ? props.children : [];
-    const childrenArr = Array.isArray(children) ? children : [children];
-    const childInstances = childrenArr.map(instantiate);
-    const childDoms = childInstances.map(childInstance => childInstance.dom);
-    childDoms.forEach(childDom => dom.appendChild(childDom));
-
-    const instance = {
-      dom,
-      element,
-      childInstances
-    };
-    return instance;
+    instantiateDomElement(element);
   }
 
   const isClassElement = Object.prototype.isPrototypeOf.call(
@@ -64,21 +90,7 @@ export default function instantiate(element) {
     type
   );
   if (isClassElement) {
-    // create instance of a component
-    const instance = {};
-    const publicInstance = createPublicInstance(element, instance);
-    const childElement = publicInstance.render();
-    const childInstance = instantiate(childElement);
-    const { dom } = childInstance;
-
-    Object.assign(instance, {
-      dom,
-      element,
-      childInstance,
-      publicInstance
-    });
-
-    return instance;
+    instantiateClassComponent(element);
   }
 
   console.error(new InvalidTypeError(`Invalid type: ${type}`));

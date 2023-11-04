@@ -1,8 +1,7 @@
 import { updateDomProperties } from "../updateDomProperties";
 
 describe("updateDomProperties", () => {
-  it("should update dom properties", () => {
-    expect.hasAssertions();
+  test("should update dom properties", () => {
     const onClick = () => {};
     const prevElement = {
       type: "div",

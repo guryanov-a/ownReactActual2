@@ -1,8 +1,7 @@
 import createPublicInstance from "../createPublicInstance";
 
 describe("createPublicInstance", () => {
-  it("create public instance of a component", () => {
-    expect.hasAssertions();
+  test("create public instance of a component", () => {
     // Arrange
     const element = {
       type: class {

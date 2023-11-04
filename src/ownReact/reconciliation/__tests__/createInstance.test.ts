@@ -1,11 +1,10 @@
 import { createInstance } from "../createInstance";
 import instantiate from "../instantiate";
 
-jest.mock("../instantiate");
+vi.mock("../instantiate");
 
 describe("createInstance", () => {
-  it("should create instance of a DOM element", () => {
-    expect.hasAssertions();
+  test("should create instance of a DOM element", () => {
     const container = document.createElement("div");
     const element = {
       type: "div",

@@ -2,12 +2,11 @@ import { updateInstance } from "../updateInstance";
 import { updateDomProperties } from "../updateDomProperties";
 import { reconcileChildren } from "../reconcileChildren";
 
-jest.mock("../updateDomProperties");
-jest.mock("../reconcileChildren");
+mock("../updateDomProperties");
+mock("../reconcileChildren");
 
 describe("updateInstance", () => {
-  it("should update instance", () => {
-    expect.hasAssertions();
+  test("should update instance", () => {
     const initialInstanceChildInsances = [
       {
         dom: document.createElement("span"),

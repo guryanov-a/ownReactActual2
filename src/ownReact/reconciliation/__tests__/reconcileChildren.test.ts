@@ -1,11 +1,10 @@
 import { reconcileChildren } from "../reconcileChildren";
 import { reconcile } from "../reconcile";
 
-jest.mock("../reconcile");
+vi.mock("../reconcile");
 
 describe("reconcileChildren", () => {
-  it("reconciles children", () => {
-    expect.hasAssertions();
+  test("reconciles children", () => {
     const instance = {
       dom: document.createElement("div"),
       childInstances: []

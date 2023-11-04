@@ -11,17 +11,16 @@ import { updateComponentInstance } from "../updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
 
-jest.mock("../createInstance");
-jest.mock("../removeInstance");
-jest.mock("../updateInstance");
-jest.mock("../replaceInstance");
-jest.mock("../updateComponentInstance");
+vi.mock("../createInstance");
+vi.mock("../removeInstance");
+vi.mock("../updateInstance");
+vi.mock("../replaceInstance");
+vi.mock("../updateComponentInstance");
 
 const originalConsoleError = console.error;
 
 describe("reconcile", () => {
-  it("createInsance", () => {
-    expect.hasAssertions();
+  test("createInsance", () => {
     createInstance.mockImplementation((parentDom, element) => {
       return {
         dom: {},
@@ -43,8 +42,7 @@ describe("reconcile", () => {
     });
   });
 
-  it("removeInstance", () => {
-    expect.hasAssertions();
+  test("removeInstance", () => {
     removeInstance.mockImplementation(() => {
       return null;
     });
@@ -60,8 +58,7 @@ describe("reconcile", () => {
     expect(result).toBeNull();
   });
 
-  it("updateInstance: in case of minor changes", () => {
-    expect.hasAssertions();
+  test("updateInstance: in case of minor changes", () => {
     const updatedInstance = {
       dom: {
         tagName: "updatedDom"
@@ -87,8 +84,7 @@ describe("reconcile", () => {
     expect(result).toStrictEqual(updatedInstance);
   });
 
-  it("updateInstance: in case if the element for the update is simple", () => {
-    expect.hasAssertions();
+  test("updateInstance: in case if the element for the update is simple", () => {
     const updatedInstance = {
       dom: {
         tagName: "updatedDom"
@@ -130,8 +126,7 @@ describe("reconcile", () => {
     expect(result).toStrictEqual(updatedInstance);
   });
 
-  it("replaceInstance", () => {
-    expect.hasAssertions();
+  test("replaceInstance", () => {
     class MockComponent1 extends OwnReactComponent {
       render() {
         return {
@@ -179,8 +174,7 @@ describe("reconcile", () => {
     expect(result).toStrictEqual(replacedInstance);
   });
 
-  it("updateComponentInstance", () => {
-    expect.hasAssertions();
+  test("updateComponentInstance", () => {
     class MockComponent extends OwnReactComponent {
       render() {
         return {
@@ -244,7 +238,7 @@ describe("reconcile", () => {
         "error: wrong parameters = %p",
         (prevInstance, element) => {
           expect.hasAssertions();
-          jest.spyOn(console, "error").mockImplementation();
+          vi.spyOn(console, "error").mockImplementation();
           reconcile(parentDom, prevInstance, element);
           expect(console.error).toHaveBeenCalledWith(
             expect.any(WrongInputError)
@@ -293,7 +287,7 @@ describe("reconcile", () => {
         "error: wrong data = %p",
         (prevInstance, element) => {
           expect.hasAssertions();
-          jest.spyOn(console, "error").mockImplementation();
+          vi.spyOn(console, "error").mockImplementation();
 
           reconcile(parentDomWrongData, prevInstance, element);
           expect(console.error).toHaveBeenCalledWith(
@@ -304,9 +298,9 @@ describe("reconcile", () => {
       );
     });
 
-    it("error: something went wrong", () => {
+    test("error: something went wrong", () => {
       expect.hasAssertions();
-      jest.spyOn(console, "error").mockImplementation();
+      vi.spyOn(console, "error").mockImplementation();
       class MockClassComponent {}
       const parentDom = {};
       const element = {

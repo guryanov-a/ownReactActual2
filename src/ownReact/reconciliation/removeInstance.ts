@@ -22,13 +22,11 @@ import { withPerformanceDomChange } from "../utils/withPerformance";
  * @see https://reactjs.org/docs/reconciliation.html#recursing-on-children
  */
 function removeInstance({container, instance}) {
-  instance.publicInstance &&
-    instance.publicInstance.componentWillUnmount &&
-    typeof instance.publicInstance.componentWillUnmount === "function" &&
+  if (typeof instance?.publicInstance?.componentWillUnmount === "function") {
     instance.publicInstance.componentWillUnmount();
+  } 
 
   container.removeChild(instance.dom);
-
   return null;
 }
 
