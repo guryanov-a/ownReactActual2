@@ -8,7 +8,7 @@
     "build": "bun --bun tsc && bun --bun vite build",
     "lint": "bun --bun eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "bun --bun vite preview",
-    "test": "TS_NODE_PROJECT='./tsconfig.node.json' NODE_OPTIONS='--loader=ts-node/esm/transpile-only --loader=esmock --experimental-specifier-resolution=node' vitest /workspaces/workspace/src/ownReact/reconciliation/updateComponentInstance/__tests__/updateComponentInstance.test.ts"
+    "test": "NODE_OPTIONS='--loader=ts-node/esm/transpile-only --loader=esmock --experimental-specifier-resolution=node' vitest /workspaces/workspace/src/ownReact/reconciliation/updateComponentInstance/__tests__/updateComponentInstance.test.ts"
   },
   "dependencies": {
     "ramda": "^0.29.1",

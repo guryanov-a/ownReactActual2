@@ -5,7 +5,9 @@ import { prepareDataForReconciliation } from "./prepareDataForReconciliation";
 
 const updateComponentInstance = (dataForUpdate) => {
   const dataForReconciliation = prepareDataForReconciliation(dataForUpdate);
-  const newChildInstance = reconcile(dataForReconciliation);
+
+  const { container } = dataForUpdate;
+  const newChildInstance = reconcile({ container, ...dataForReconciliation });
 
   const { instance, element } = dataForUpdate;
   return applyNewComponentInstanceData({ instance, element, newChildInstance });
