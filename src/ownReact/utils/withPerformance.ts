@@ -46,7 +46,7 @@ const getElementName = (element) => {
   return element.type;
 };
 
-function withPerformanceUpdate(fn, name = fn.name) {
+export function withPerformanceUpdate(fn, name = fn.name) {
   return function (args) {
     const element = args?.instance?.element ?? args?.element;
     const id = element.__id ?? element.__id;
@@ -92,7 +92,7 @@ function withPerformanceUpdate(fn, name = fn.name) {
   };
 }
 
-function withPerformanceDomChange(fn) {
+export function withPerformanceDomChange(fn) {
   return function (args) {
     const element = args?.instance?.element ?? args?.element;
     const id = element.__id ?? element.__id;
@@ -120,17 +120,3 @@ function withPerformanceDomChange(fn) {
     return result;
   };
 }
-
-const testOrProductionEnv =
-  process.env.VITEST === "test" || process.env.NODE_ENV === "production";
-const withPerformanceUpdateExport = testOrProductionEnv
-  ? withPerformanceUpdate
-  : (fn) => fn;
-const withPerformanceDomChangeExport = testOrProductionEnv
-  ? withPerformanceDomChange
-  : (fn) => fn;
-
-export {
-  withPerformanceUpdateExport as withPerformanceUpdate,
-  withPerformanceDomChangeExport as withPerformanceDomChange,
-};

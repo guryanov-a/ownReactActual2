@@ -1,5 +1,12 @@
-import { strictest } from 'esmock'
-import { identity } from 'ramda';
+import { updateComponentInstance } from '../updateComponentInstance';
+import { prepareDataForReconciliation } from '../prepareDataForReconciliation';
+import { reconcile } from '../../reconcile';
+import { applyNewComponentInstanceData } from '../applyNewComponentInstanceData';
+
+vi.mock('../../../utils/withPerformance');
+vi.mock('../prepareDataForReconciliation');
+vi.mock('../../reconcile');
+vi.mock('../applyNewComponentInstanceData');
 
 describe("updateComponentInstance", () => {
   test("checks that it works correctly", async () => {
@@ -45,16 +52,17 @@ describe("updateComponentInstance", () => {
       element: nextInstanceElement,
     };
 
+
     const dataPreparedForReconciliation = { instance: currentChildInstance, element: expectedNextChildInstance };
 
-    const { updateComponentInstance } = await strictest('../updateComponentInstance', {
-      '../../../utils/withPerformance': { withPerformanceDomChange: identity },
-      '../prepareDataForReconciliation': { prepareDataForReconciliation: () => dataPreparedForReconciliation },
-      '../../reconcile': { reconcile: () => expectedNextChildInstance },
-      '../applyNewComponentInstanceData': { applyNewComponentInstanceData: () => expectedNextInstance },
-    });
+    vi.mocked(prepareDataForReconciliation).mockReturnValue(dataPreparedForReconciliation);
+    vi.mocked(reconcile).mockReturnValue(expectedNextChildInstance);
+    vi.mocked(applyNewComponentInstanceData).mockReturnValue(expectedNextInstance);
 
     const result = updateComponentInstance({ container, instance: currentInstance, element: nextInstanceElement });
     expect(result).toStrictEqual(expectedNextInstance);
+    expect(prepareDataForReconciliation).toBeCalled();
+    expect(reconcile).toBeCalled();
+    expect(applyNewComponentInstanceData).toBeCalled();
   });
 })
