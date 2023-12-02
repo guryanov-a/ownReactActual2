@@ -2,8 +2,8 @@ import { updateInstance } from "../updateInstance";
 import { updateDomProperties } from "../updateDomProperties";
 import { reconcileChildren } from "../reconcileChildren";
 
-mock("../updateDomProperties");
-mock("../reconcileChildren");
+vi.mock("../updateDomProperties");
+vi.mock("../reconcileChildren");
 
 describe("updateInstance", () => {
   test("should update instance", () => {
@@ -25,6 +25,7 @@ describe("updateInstance", () => {
         }
       }
     ];
+
     const initialInstance = {
       dom: document.createElement("div"),
       element: {
@@ -49,6 +50,7 @@ describe("updateInstance", () => {
       },
       childInstances: initialInstanceChildInsances
     };
+
     const element = {
       type: "div",
       props: {
@@ -95,6 +97,7 @@ describe("updateInstance", () => {
         }
       }
     };
+
     const expectedChildInstances = [
       {
         dom: document.createElement("span"),
@@ -113,18 +116,19 @@ describe("updateInstance", () => {
         }
       }
     ];
+    
     const expectedInstance = {
       ...expectedInstanceMainInfo,
       childInstances: expectedChildInstances
     };
 
-    updateDomProperties.mockImplementation(() => ({
+    vi.mocked(updateDomProperties).mockReturnValue({
       ...expectedInstanceMainInfo,
       childInstances: initialInstanceChildInsances
-    }));
-    reconcileChildren.mockImplementation(() => expectedChildInstances);
+    });
+    vi.mocked(reconcileChildren).mockReturnValue(expectedChildInstances);
 
-    const nextInstance = updateInstance(initialInstance, element);
+    const nextInstance = updateInstance({ instance: initialInstance, element });
     expect(nextInstance).toStrictEqual(expectedInstance);
   });
 });

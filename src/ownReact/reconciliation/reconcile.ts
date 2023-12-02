@@ -73,7 +73,7 @@ export function reconcile({container, instance, element}) {
 
   // update instance in case if the element for the update is simple
   if (typeof element.type === "string") {
-    return updateInstance({instance, element});
+    return updateInstance({ instance, element });
   }
 
   // update component instance

@@ -32,6 +32,7 @@ export interface DomInstance {
     type: string;
     dom: HTMLElement;
     element: DomElement;
+    childInstances: Instance[];
 }
 
 export type Instance = ComponentInstance | DomInstance;
