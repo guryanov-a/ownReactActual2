@@ -28,7 +28,7 @@ export class WrongDataError extends Error {}
  * @todo
  * - [ ] test
  */
-export function reconcile({container, instance, element}) {
+export function reconcile({ container, instance, element }) {
   if (instance === undefined || element === undefined) {
     console.error(
       new WrongInputError(
@@ -47,7 +47,7 @@ export function reconcile({container, instance, element}) {
 
   // clean up after removing
   if (element === null) {
-    return removeInstance({container, instance});
+    return removeInstance({ container, instance });
   }
 
   if (

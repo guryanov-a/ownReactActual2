@@ -1,3 +1,5 @@
+import { OwnReactComponent } from "../OwnReactComponent";
+import { ComponentInstance, Instance } from "../types";
 import { withPerformanceDomChange } from "../utils/withPerformance";
 
 /**
@@ -21,10 +23,20 @@ import { withPerformanceDomChange } from "../utils/withPerformance";
  * @see https://reactjs.org/docs/reconciliation.html#keys
  * @see https://reactjs.org/docs/reconciliation.html#recursing-on-children
  */
-function removeInstance({container, instance}) {
-  if (typeof instance?.publicInstance?.componentWillUnmount === "function") {
+
+const isComponentInstance = (instance: Instance): instance is ComponentInstance => {
+  return Object.prototype.isPrototypeOf.call(OwnReactComponent, instance.element.type);
+};
+
+interface Params {
+  container: HTMLElement;
+  instance: Instance;
+}
+type RemoveInstance = (params: Params) => null;
+const removeInstance: RemoveInstance = ({ container, instance }) => {
+  if (isComponentInstance(instance) && instance.publicInstance.componentWillUnmount) {
     instance.publicInstance.componentWillUnmount();
-  } 
+  }
 
   container.removeChild(instance.dom);
   return null;

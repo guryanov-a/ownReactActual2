@@ -10,7 +10,7 @@ describe("removeInstance", () => {
     parentDom.appendChild(instance.dom);
     expect(parentDom.childNodes).toHaveLength(1);
 
-    removeInstance(parentDom, instance);
+    removeInstance({ container: parentDom, instance});
     expect(parentDom.childNodes).toHaveLength(0);
   });
 });

@@ -41,6 +41,7 @@ export type Instance = ComponentInstance | DomInstance;
 export interface PublicInstance {
     props?: Record<string, any>;
     render: () => Element;
+    componentWillUnmount?: () => void;
     __internalInstance: Instance;
 }
 
