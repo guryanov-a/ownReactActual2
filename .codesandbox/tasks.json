@@ -6,8 +6,8 @@
   "tasks": {
     "Start": {
       "name": "Start",
-      "command": "bun --bun vite dev",
-      "runAtStart": true,
+      "command": "vite dev",
+      "runAtStart": false,
       "preview": {
         "port": 5173
       }

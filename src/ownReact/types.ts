@@ -25,6 +25,7 @@ export interface ComponentInstance {
     publicInstance: PublicInstance;
     childInstance: Instance;
     element: ComponentElement;
+    dom: HTMLElement;
 }
 
 export interface DomInstance {
