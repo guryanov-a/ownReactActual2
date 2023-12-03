@@ -16,12 +16,13 @@ vi.mock("../removeInstance");
 vi.mock("../updateInstance");
 vi.mock("../replaceInstance");
 vi.mock("../updateComponentInstance");
+vi.mock("../../utils/withPerformance");
 
 const originalConsoleError = console.error;
 
 describe("reconcile", () => {
   test("createInsance", () => {
-    createInstance.mockImplementation((parentDom, element) => {
+   vi.mocked(createInstance).mockImplementation(({ element }) => {
       return {
         dom: {},
         element,
@@ -29,12 +30,12 @@ describe("reconcile", () => {
       };
     });
 
-    const parentDom = {};
+    const container = {};
     const element = {
       type: null
     };
-    const result = reconcile(parentDom, null, element);
-    expect(createInstance).toHaveBeenCalledWith(parentDom, element);
+    const result = reconcile({ container, instance: null, element });
+    expect(createInstance).toHaveBeenCalledWith({ container, element });
     expect(result).toStrictEqual({
       dom: {},
       element,

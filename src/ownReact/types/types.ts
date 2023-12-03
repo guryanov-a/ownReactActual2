@@ -22,7 +22,7 @@ export type Element = DomElement | ComponentElement | TextElement;
 
 // instances
 export interface ComponentInstance {
-    publicInstance: PublicInstance;
+    publicInstance: OwnReactComponent;
     childInstance: Instance;
     element: ComponentElement;
     dom: HTMLElement;
@@ -37,14 +37,6 @@ export interface DomInstance {
 
 export type Instance = ComponentInstance | DomInstance;
 
-// component instances
-export interface PublicInstance {
-    props?: Record<string, any>;
-    render: () => Element;
-    componentWillUnmount?: () => void;
-    __internalInstance: Instance;
-}
-
 // props
 export interface TextElementProps {
     nodeValue: string;
@@ -53,9 +45,12 @@ export interface DomElementProps {
     key?: string;
     [key: string]: any;
 }
-export interface ComponentProps {
+export interface ComponentProps extends ComponentInputProps {
     children?: Element[];
+}
+export interface ComponentInputProps {
     key?: string;
     [key: string]: unknown;
 }
+
 export type ElementProps = TextElementProps | DomElementProps | ComponentProps;

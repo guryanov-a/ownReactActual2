@@ -78,11 +78,11 @@ export default function instantiate(element) {
   const isDomElement = typeof type === "string";
 
   if (type === "TEXT ELEMENT") {
-    instantiateTextElement(element);
+    return instantiateTextElement(element);
   }
 
   if (isDomElement) {
-    instantiateDomElement(element);
+    return instantiateDomElement(element);
   }
 
   const isClassElement = Object.prototype.isPrototypeOf.call(
@@ -90,7 +90,7 @@ export default function instantiate(element) {
     type
   );
   if (isClassElement) {
-    instantiateClassComponent(element);
+    return instantiateClassComponent(element);
   }
 
   console.error(new InvalidTypeError(`Invalid type: ${type}`));
