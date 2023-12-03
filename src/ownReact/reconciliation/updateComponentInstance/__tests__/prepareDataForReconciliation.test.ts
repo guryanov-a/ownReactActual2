@@ -1,4 +1,4 @@
-import { ComponentElement, ComponentInstance } from "../../../types";
+import { ComponentElement, ComponentInstance } from "../../../types/types";
 import { prepareDataForReconciliation } from "../prepareDataForReconciliation";
 
 describe("prepareDataForReconciliation", () => {

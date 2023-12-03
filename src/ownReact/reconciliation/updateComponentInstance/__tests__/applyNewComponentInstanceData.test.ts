@@ -1,4 +1,4 @@
-import { ComponentElement, ComponentInstance, DomInstance } from "../../../types";
+import { ComponentElement, ComponentInstance, DomInstance } from "../../../types/types";
 import { applyNewComponentInstanceData } from "../applyNewComponentInstanceData";
 
 describe("applyNewComponentInstanceData", () => {

@@ -1,4 +1,4 @@
-import type { OwnReactComponent } from "./OwnReactComponent";
+import type { OwnReactComponent } from "../OwnReactComponent";
 
 // elements
 export interface TextElement {

@@ -1,4 +1,4 @@
-import { ComponentInstance, Element, Instance, ComponentElement } from "../../types";
+import { ComponentInstance, Element, Instance, ComponentElement } from "../../types/types";
 
 interface Params {
     instance: ComponentInstance;

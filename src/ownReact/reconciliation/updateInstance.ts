@@ -1,7 +1,7 @@
 import { updateDomProperties } from "./updateDomProperties";
 import { reconcileChildren } from "./reconcileChildren";
 import { withPerformanceDomChange } from "../utils/withPerformance";
-import { DomElement, DomInstance, Instance } from "../types";
+import { DomElement, DomInstance, Instance } from "../types/types";
 
 interface Params {
   instance: DomInstance;
