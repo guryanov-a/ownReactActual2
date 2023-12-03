@@ -10,7 +10,7 @@ import { updateInstance } from "../updateInstance";
 import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
-import { Element, Instance } from "../../types/types";
+import { ComponentElement, ComponentInstance, Element, Instance } from "../../types/types";
 
 vi.mock("../createInstance");
 vi.mock("../removeInstance");
@@ -86,7 +86,7 @@ describe("reconcile", () => {
     expect(result).toStrictEqual(updatedInstance);
   });
 
-  test("updateInstance: D", () => {
+  test("updateInstance: in case if the element for the update is simple", () => {
     const updatedInstance = {
       dom: {
         tagName: "updatedDom"
@@ -155,22 +155,20 @@ describe("reconcile", () => {
       childInstances: ["replacedChildInstances"]
     };
 
-    replaceInstance.mockImplementation(() => {
-      return replacedInstance;
-    });
+    vi.mocked(replaceInstance).mockReturnValue(replacedInstance);
 
-    const parentDom = {};
+    const container = document.createElement("div");
     const element = {
       type: MockComponent2
-    };
+    } as unknown as ComponentElement;
     const prevInstance = {
       dom: {},
       element: {
         type: MockComponent1
       },
       childInstances: []
-    };
-    const result = reconcile(parentDom, prevInstance, element);
+    } as unknown as ComponentInstance;
+    const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toStrictEqual(replacedInstance);
   });
 
@@ -195,9 +193,7 @@ describe("reconcile", () => {
       childInstances: ["updatedChildInstances"]
     };
 
-    updateComponentInstance.mockImplementation(() => {
-      return updatedInstance;
-    });
+    vi.mocked(updateComponentInstance).mockReturnValue(updatedInstance);
 
     const parentDom = {};
     const element = {
