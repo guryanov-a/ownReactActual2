@@ -4,31 +4,20 @@ import { updateInstance } from "./updateInstance";
 import { replaceInstance } from "./replaceInstance";
 import { updateComponentInstance } from "./updateComponentInstance/updateComponentInstance";
 import { updateTextInstance } from "./updateTextInstance";
-import { OwnReactComponent } from "../OwnReactComponent";
+import { Element, Instance } from "../types/types";
+import { isComponentInstance } from "../types/is";
 
 export class UnexpectedError extends Error {}
 export class WrongInputError extends Error {}
 export class WrongDataError extends Error {}
 
-/**
- * reconcile VDOM states
- * @param {HTMLElement} container
- * @param {Object} currentInstance
- * @param {Object} element
- * @returns {Object} nextInstance
- * @example
- * const prevInstance = rootInstance;
- * const nextInstance = reconcile(container, prevInstance, element);
- *
- * @see https://reactjs.org/docs/reconciliation.html
- * @see https://reactjs.org/docs/rendering-elements.html
- * @see https://reactjs.org/docs/rendering-elements.html#updating-the-rendered-element
- * @see https://reactjs.org/docs/rendering-elements.html#react-only-updates-whats-necessary
- *
- * @todo
- * - [ ] test
- */
-export function reconcile({ container, instance, element }) {
+export interface Params {
+  container: HTMLElement;
+  instance: Instance | null;
+  element: Element | null;
+}
+export type Reconcile = (params: Params) => Instance;
+export const reconcile: Reconcile = ({ container, instance, element }) => {
   if (instance === undefined || element === undefined) {
     console.error(
       new WrongInputError(
@@ -79,7 +68,7 @@ export function reconcile({ container, instance, element }) {
   // update component instance
   if (
     instance.element.type === element.type &&
-    Object.prototype.isPrototypeOf.call(OwnReactComponent, element.type)
+    isComponentInstance(instance)
   ) {
     if (
       instance.publicInstance.shouldComponentUpdate &&

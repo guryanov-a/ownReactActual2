@@ -10,6 +10,7 @@ import { updateInstance } from "../updateInstance";
 import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
+import { Element, Instance } from "../../types/types";
 
 vi.mock("../createInstance");
 vi.mock("../removeInstance");
@@ -30,10 +31,10 @@ describe("reconcile", () => {
       };
     });
 
-    const container = {};
+    const container = document.createElement("div");
     const element = {
       type: null
-    };
+    } as unknown as Element;
     const result = reconcile({ container, instance: null, element });
     expect(createInstance).toHaveBeenCalledWith({ container, element });
     expect(result).toStrictEqual({
@@ -44,18 +45,18 @@ describe("reconcile", () => {
   });
 
   test("removeInstance", () => {
-    removeInstance.mockImplementation(() => {
+    vi.mocked(removeInstance).mockImplementation(() => {
       return null;
     });
 
-    const parentDom = {};
+    const container = document.createElement("div");
     const element = null;
     const prevInstance = {
       dom: {},
       element,
       childInstances: []
-    };
-    const result = reconcile(parentDom, prevInstance, element);
+    } as unknown as Instance;
+    const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toBeNull();
   });
 
