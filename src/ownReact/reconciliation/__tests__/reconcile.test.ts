@@ -60,7 +60,10 @@ describe("reconcile", () => {
     expect(result).toBeNull();
   });
 
-  test("updateInstance: in case of minor changes", () => {
+  test("updateInstance: DOM changes", () => {
+    const element = {
+      type: "div"
+    } as unknown as Element;
     const updatedInstance = {
       dom: {
         tagName: "updatedDom"
@@ -68,21 +71,18 @@ describe("reconcile", () => {
       element,
       childInstances: ["updatedChildInstances"]
     };
-    updateInstance.mockImplementation(() => {
-      return updatedInstance;
-    });
-    const parentDom = {};
-    const element = {
-      type: "div"
-    };
+    const container = document.createElement("div");
     const prevInstance = {
       dom: {},
       element: {
         type: "div"
       },
       childInstances: []
-    };
-    const result = reconcile(parentDom, prevInstance, element);
+    } as unknown as Instance;
+
+    vi.mocked(updateInstance).mockReturnValue(updatedInstance);
+
+    const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toStrictEqual(updatedInstance);
   });
 
