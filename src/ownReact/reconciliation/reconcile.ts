@@ -56,7 +56,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
     return replaceInstance({container, element});
   }
 
-  if (element.type === "TEXT ELEMENT") {
+  if (element.type === "TEXT_ELEMENT") {
     return updateTextInstance({instance, element});
   }
 

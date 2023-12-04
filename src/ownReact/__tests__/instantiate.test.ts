@@ -61,7 +61,7 @@ describe("instantiate", () => {
 
   test("instantiate a DOM element: text", () => {
     const element = {
-      type: "TEXT ELEMENT",
+      type: "TEXT_ELEMENT",
       props: { nodeValue: "foo" }
     };
     const expectedInstance = {
@@ -79,7 +79,7 @@ describe("instantiate", () => {
     class MockClassComponent extends OwnReactComponent {
       render() {
         return {
-          type: "TEXT ELEMENT",
+          type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
         };
       }
@@ -104,7 +104,7 @@ describe("instantiate", () => {
       childInstance: {
         dom: document.createTextNode("foo"),
         element: {
-          type: "TEXT ELEMENT",
+          type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
         },
         childInstances: []

@@ -13,7 +13,7 @@ export function jsxDEV(...args) {
         ...element.props,
         children: [
           {
-            type: "TEXT ELEMENT",
+            type: "TEXT_ELEMENT",
             props: {
               nodeValue: element.props.children
             },

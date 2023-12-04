@@ -6,7 +6,7 @@ const updateDomText = withPerformanceDomChange(({ instance, element }) => {
 
 export const updateTextInstance = ({instance, element}) => {
   const isTheSameTextElement =
-    instance.element.type === "TEXT ELEMENT" &&
+    instance.element.type === "TEXT_ELEMENT" &&
     instance.element.props.nodeValue === element.props.nodeValue;
 
   if (!isTheSameTextElement) {

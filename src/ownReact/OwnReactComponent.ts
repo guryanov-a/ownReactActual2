@@ -1,16 +1,17 @@
-import { ComponentInputProps, ComponentInstance, ComponentProps } from "./types/types";
+import { ComponentInputProps, ComponentInstance, ComponentProps, Element } from "./types/types";
 import { updateComponent } from "./updateComponent";
 
 export type InternalInstance = ComponentInstance | null;
 export type ChangeState = (state: ComponentState) => Partial<ComponentState>;
 export type ComponentState = Record<string, unknown>;
 
-export class OwnReactComponent {
+export abstract class OwnReactComponent {
   props: ComponentProps;
   state: ComponentState;
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;
   __internalInstance: InternalInstance;
+  abstract render(): Element | null;
 
   constructor(props: ComponentInputProps) {
     this.props = props || {};

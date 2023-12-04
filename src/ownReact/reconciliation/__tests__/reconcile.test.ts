@@ -10,7 +10,7 @@ import { updateInstance } from "../updateInstance";
 import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
-import { ComponentElement, ComponentInstance, Element, Instance } from "../../types/types";
+import { ComponentElement, ComponentInstance, Element, Instance, TextElement } from "../../types/types";
 
 vi.mock("../createInstance");
 vi.mock("../removeInstance");
@@ -128,7 +128,7 @@ describe("reconcile", () => {
     class MockComponent1 extends OwnReactComponent {
       render() {
         return {
-          type: "TEXT ELEMENT",
+          type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
         };
       }
@@ -137,7 +137,7 @@ describe("reconcile", () => {
     class MockComponent2 extends OwnReactComponent {
       render() {
         return {
-          type: "TEXT ELEMENT",
+          type: "TEXT_ELEMENT",
           props: { nodeValue: "bar" }
         };
       }
@@ -174,9 +174,9 @@ describe("reconcile", () => {
     class MockComponent extends OwnReactComponent {
       render() {
         return {
-          type: "TEXT ELEMENT",
+          type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
-        };
+        } as TextElement;
       }
     }
 

@@ -12,6 +12,7 @@ interface Result {
 type PrepareDataForReconciliation = (params: Params) => Result;
 export const prepareDataForReconciliation: PrepareDataForReconciliation = ({ instance, element }) => {
     instance.publicInstance.props = element.props;
+
     const childElement = instance.publicInstance.render();
     const oldChildInstance = instance.childInstance;
 

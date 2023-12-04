@@ -35,8 +35,8 @@ if (window && !window.performance_profiler) {
 }
 
 const getElementName = (element) => {
-  if (element.type === "TEXT ELEMENT") {
-    return `TEXT ELEMENT ${element.props.nodeValue}`;
+  if (element.type === "TEXT_ELEMENT") {
+    return `TEXT_ELEMENT ${element.props.nodeValue}`;
   }
 
   if (typeof element.type === "function") {

@@ -77,7 +77,7 @@ export default function instantiate(element) {
   const { type } = element;
   const isDomElement = typeof type === "string";
 
-  if (type === "TEXT ELEMENT") {
+  if (type === "TEXT_ELEMENT") {
     return instantiateTextElement(element);
   }
 

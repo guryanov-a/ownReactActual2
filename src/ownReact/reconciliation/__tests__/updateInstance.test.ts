@@ -15,7 +15,7 @@ describe("updateInstance", () => {
           props: {
             children: [
               {
-                type: "TEXT ELEMENT",
+                type: "TEXT_ELEMENT",
                 props: {
                   nodeValue: "Hello"
                 }
@@ -37,7 +37,7 @@ describe("updateInstance", () => {
               props: {
                 children: [
                   {
-                    type: "TEXT ELEMENT",
+                    type: "TEXT_ELEMENT",
                     props: {
                       nodeValue: "Hello"
                     }
@@ -61,7 +61,7 @@ describe("updateInstance", () => {
             props: {
               children: [
                 {
-                  type: "TEXT ELEMENT",
+                  type: "TEXT_ELEMENT",
                   props: {
                     nodeValue: "Hello World"
                   }
@@ -85,7 +85,7 @@ describe("updateInstance", () => {
               props: {
                 children: [
                   {
-                    type: "TEXT ELEMENT",
+                    type: "TEXT_ELEMENT",
                     props: {
                       nodeValue: "Hello World"
                     }
@@ -106,7 +106,7 @@ describe("updateInstance", () => {
           props: {
             children: [
               {
-                type: "TEXT ELEMENT",
+                type: "TEXT_ELEMENT",
                 props: {
                   nodeValue: "Hello World"
                 }

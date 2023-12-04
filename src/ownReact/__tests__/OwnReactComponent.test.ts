@@ -114,7 +114,7 @@ describe("ownReactComponent", () => {
           id: "test",
           children: [
             {
-              type: "TEXT ELEMENT",
+              type: "TEXT_ELEMENT",
               props: {
                 nodeValue: "Hello world!"
               }
