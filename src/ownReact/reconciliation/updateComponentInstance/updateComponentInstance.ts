@@ -2,40 +2,15 @@ import { reconcile } from "../reconcile";
 import { withPerformanceDomChange } from "../../utils/withPerformance";
 import { applyNewComponentInstanceData } from "./applyNewComponentInstanceData";
 import { prepareDataForReconciliation } from "./prepareDataForReconciliation";
+import { ComponentElement, ComponentInstance } from "../../types/types";
 
-interface DomElement {
-  type: string;
-  props: Record<string, any>;
-}
-
-interface ComponentElement {
-  type: typeof OwnReactComponent;
-  props: Record<string, any>;
-}
-
-type Element = DomElement | ComponentElement;
-
-interface ComponentInstance {
-  publicInstance: PublicInstance;
-  childInstance: Instance;
+export interface Params {
+  container: HTMLElement;
+  instance: ComponentInstance;
   element: ComponentElement;
 }
-
-interface DomInstance {
-  type: string;
-  dom: HTMLElement;
-  element: DomElement;
-}
-
-type Instance = ComponentInstance | DomInstance;
-
-interface PublicInstance {
-  props: Record<string, any>;
-  render: () => {};
-  __internalInstance: Instance;
-}
-
-const updateComponentInstance = (dataForUpdate) => {
+export type UpdateComponentInstance = (params: Params) => ComponentInstance;
+const updateComponentInstance: UpdateComponentInstance = (dataForUpdate) => {
   const dataForReconciliation = prepareDataForReconciliation(dataForUpdate);
 
   const { container } = dataForUpdate;

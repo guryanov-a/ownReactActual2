@@ -16,7 +16,7 @@ vi.mock("../createInstance");
 vi.mock("../removeInstance");
 vi.mock("../updateInstance");
 vi.mock("../replaceInstance");
-vi.mock("../updateComponentInstance");
+vi.mock("../updateComponentInstance/updateComponentInstance");
 vi.mock("../../utils/withPerformance");
 
 const originalConsoleError = console.error;
@@ -195,18 +195,19 @@ describe("reconcile", () => {
 
     vi.mocked(updateComponentInstance).mockReturnValue(updatedInstance);
 
-    const parentDom = {};
+    const container = document.createElement("div");
     const element = {
       type: MockComponent
-    };
+    } as unknown as ComponentElement;
     const prevInstance = {
       dom: {},
       element: {
         type: MockComponent
       },
       childInstances: []
-    };
-    const result = reconcile(parentDom, prevInstance, element);
+    } as unknown as ComponentInstance;
+    
+    const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toStrictEqual(updatedInstance);
   });
 

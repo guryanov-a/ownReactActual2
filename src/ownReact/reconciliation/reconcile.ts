@@ -31,7 +31,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
 
   // initialize instance
   if (instance === null) {
-    return createInstance({container, element});
+    return createInstance({ container, element });
   }
 
   // clean up after removing
@@ -71,7 +71,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
     isComponentInstance(instance)
   ) {
     if (
-      typeof instance.publicInstance.shouldComponentUpdate === "function" 
+      typeof instance.publicInstance?.shouldComponentUpdate === "function" 
       && !instance.publicInstance.shouldComponentUpdate()
     ) {
       return instance;
