@@ -19,8 +19,6 @@ vi.mock("../replaceInstance");
 vi.mock("../updateComponentInstance/updateComponentInstance");
 vi.mock("../../utils/withPerformance");
 
-const originalConsoleError = console.error;
-
 describe("reconcile", () => {
   test("createInsance", () => {
    vi.mocked(createInstance).mockImplementation(({ element }) => {
@@ -206,41 +204,46 @@ describe("reconcile", () => {
       },
       childInstances: []
     } as unknown as ComponentInstance;
-    
+
     const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toStrictEqual(updatedInstance);
   });
 
   describe("errors", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+    
     describe("error: wrong input", () => {
-      const parentDom = {};
+      const container = document.createElement("div");
       const element = {
         type: "div"
-      };
+      } as unknown as Element;
       const prevInstance = {
         dom: {},
         element: {
           type: "div"
         },
         childInstances: []
-      };
+      } as unknown as Instance;
+      const emptyInstance = undefined as unknown as Instance;
+      const emptyElement = undefined as unknown as Element;
 
-      const testCasesWrongParameters = [
-        [undefined, element],
-        [prevInstance, undefined],
-        [undefined, undefined]
+      const testCasesWrongParameters: [Instance, Element][] = [
+        [emptyInstance, element],
+        [prevInstance, emptyElement],
+        [emptyInstance, emptyElement]
       ];
 
       it.each(testCasesWrongParameters)(
         "error: wrong parameters = %p",
         (prevInstance, element) => {
           expect.hasAssertions();
-          vi.spyOn(console, "error").mockImplementation();
-          reconcile(parentDom, prevInstance, element);
+          vi.spyOn(console, "error").mockImplementation(() => {});
+          reconcile({ container, instance: prevInstance, element });
           expect(console.error).toHaveBeenCalledWith(
             expect.any(WrongInputError)
           );
-          console.error = originalConsoleError;
         }
       );
     });
