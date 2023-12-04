@@ -301,22 +301,21 @@ describe("reconcile", () => {
       expect.hasAssertions();
       vi.spyOn(console, "error").mockImplementation(() => {});
       class MockClassComponent {}
-      const parentDom = {};
+      const container = document.createElement("div");
       const element = {
         type: MockClassComponent
-      };
+      } as unknown as Element;
       const prevInstance = {
         dom: {},
         element: {
           type: MockClassComponent
         },
         childInstances: []
-      };
+      } as unknown as Instance;
 
-      reconcile(parentDom, prevInstance, element);
+      reconcile({ container, instance: prevInstance, element });
 
       expect(console.error).toHaveBeenCalledWith(expect.any(UnexpectedError));
-      console.error = originalConsoleError;
     });
   });
 });
