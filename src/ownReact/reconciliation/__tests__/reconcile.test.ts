@@ -251,32 +251,32 @@ describe("reconcile", () => {
     describe("error: wrong data", () => {
       const elementTypeUndefined = {
         type: undefined
-      };
+      } as unknown as Element;
       const prevInstanceTypeUndefined = {
         dom: {},
         element: {
           type: undefined
         },
         childInstances: []
-      };
+      } as unknown as Instance;
       const prevInstanceElementUndefined = {
         dom: {},
         element: undefined,
         childInstances: []
-      };
+      } as unknown as Instance;
       const elementWrongData = {
         type: "div"
-      };
+      } as unknown as Element;
       const prevInstance = {
         dom: {},
         element: {
           type: "div"
         },
         childInstances: []
-      };
-      const parentDomWrongData = {};
+      } as unknown as Instance;
+      const parentDomWrongData = {} as unknown as HTMLElement;
 
-      const testCasesWrongData = [
+      const testCasesWrongData: [Instance, Element][] = [
         [prevInstance, elementTypeUndefined],
         [prevInstanceTypeUndefined, elementWrongData],
         [prevInstanceTypeUndefined, elementTypeUndefined],
@@ -287,20 +287,19 @@ describe("reconcile", () => {
         "error: wrong data = %p",
         (prevInstance, element) => {
           expect.hasAssertions();
-          vi.spyOn(console, "error").mockImplementation();
+          vi.spyOn(console, "error").mockImplementation(() => {});
 
-          reconcile(parentDomWrongData, prevInstance, element);
+          reconcile({ container: parentDomWrongData, instance: prevInstance, element });
           expect(console.error).toHaveBeenCalledWith(
             expect.any(WrongDataError)
           );
-          console.error = originalConsoleError;
         }
       );
     });
 
     test("error: something went wrong", () => {
       expect.hasAssertions();
-      vi.spyOn(console, "error").mockImplementation();
+      vi.spyOn(console, "error").mockImplementation(() => {});
       class MockClassComponent {}
       const parentDom = {};
       const element = {
