@@ -1,4 +1,4 @@
-import type { OwnReactComponent } from "../OwnReactComponent";
+import type { OwnReactExtendedClass, OwnReactComponent } from "../OwnReactComponent";
 
 // elements
 export interface TextElement {
@@ -14,7 +14,7 @@ export interface DomElement {
 }
 
 export interface ComponentElement {
-    type: OwnReactComponent;
+    type: OwnReactExtendedClass;
     props: Record<string, any>;
 }
 
@@ -29,13 +29,17 @@ export interface ComponentInstance {
 }
 
 export interface DomInstance {
-    type: string;
     dom: HTMLElement;
     element: DomElement;
     childInstances: Instance[];
 }
 
-export type Instance = ComponentInstance | DomInstance;
+export interface TextInstance {
+    dom: Text;
+    element: TextElement;
+}
+
+export type Instance = ComponentInstance | DomInstance | TextInstance;
 
 // props
 export interface TextElementProps {

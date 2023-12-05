@@ -5,6 +5,7 @@ export type InternalInstance = ComponentInstance | null;
 export type ChangeState = (state: ComponentState) => Partial<ComponentState>;
 export type ComponentState = Record<string, unknown>;
 
+export type OwnReactExtendedClass = new (props: ComponentInputProps) => OwnReactComponent;
 export abstract class OwnReactComponent {
   props: ComponentProps;
   state: ComponentState;

@@ -24,6 +24,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
         "prev instance or curr element is undefined. This should not happen."
       )
     );
+    
     return instance;
   }
 

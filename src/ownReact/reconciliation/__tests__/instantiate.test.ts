@@ -1,17 +1,18 @@
 import { identity } from "ramda";
-import instantiate, {
+import {
+  instantiate,
   InvalidTypeError,
   InvalidInputError
 } from "../instantiate";
 import { updateDomProperties } from "../updateDomProperties";
-import createPublicInstance from "../createPublicInstance";
+import { createPublicInstance } from "../createPublicInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
 
 vi.mock("../updateDomProperties");
 vi.mock("../createPublicInstance");
 
 describe("instantiate", () => {
-  updateDomProperties.mockImplementation(identity);
+  vi.mocked(updateDomProperties).mockImplementation(identity);
 
   test("instantiate a DOM element: HTML element", () => {
     const element = {
