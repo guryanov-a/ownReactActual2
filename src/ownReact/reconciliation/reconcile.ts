@@ -8,48 +8,37 @@ import { Element, Instance } from "../types/types";
 import { isComponentInstance } from "../types/is";
 
 export class UnexpectedError extends Error {}
-export class WrongInputError extends Error {}
-export class WrongDataError extends Error {}
 
-export interface Params {
+export interface ParamsToInitialize {
   container: HTMLElement;
-  instance: Instance | null;
-  element: Element | null;
+  instance: null;
+  element: Element;
 }
-export type Reconcile = (params: Params) => Instance;
+
+export interface ParamsToRemove {
+  container: HTMLElement;
+  instance: Instance;
+  element: null;
+}
+
+export interface ParamsToUpdate {
+  container: HTMLElement;
+  instance: Instance;
+  element: Element;
+}
+
+// choosing what to do with the instance
+export type Params = ParamsToInitialize | ParamsToUpdate | ParamsToRemove;
+export type Reconcile = <T extends Params>(params: T) => Instance;
 export const reconcile: Reconcile = ({ container, instance, element }) => {
-  if (instance === undefined || element === undefined) {
-    console.error(
-      new WrongInputError(
-        "prev instance or curr element is undefined. This should not happen."
-      )
-    );
-    
-    return instance;
-  }
-
-  // choosing what to do with the instance
-
-  // initialize instance
-  if (instance === null) {
-    return createInstance({ container, element });
-  }
-
   // clean up after removing
   if (element === null) {
     return removeInstance({ container, instance });
   }
 
-  if (
-    !(instance.element && instance.element.type) ||
-    !element.type
-  ) {
-    console.error(
-      new WrongDataError(
-        "prev or curr element type is undefined. This should not happen."
-      )
-    );
-    return instance;
+  // initialize instance
+  if (instance === null) {
+    return createInstance({ container, element });
   }
 
   // replace instance in case of major changes

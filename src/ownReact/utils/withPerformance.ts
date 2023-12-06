@@ -1,3 +1,6 @@
+import { isComponentElement, isTextElement } from "../types/is";
+import { Element, Instance } from "../types/types";
+
 class Profiler {
   entries: Record<string, PerformanceEntry>;
   isTracking: boolean;
@@ -34,12 +37,13 @@ if (window && !window.performance_profiler) {
   window.performance_profiler = new Profiler();
 }
 
-const getElementName = (element) => {
-  if (element.type === "TEXT_ELEMENT") {
+type GetElementName = (element: Element) => string;
+const getElementName: GetElementName = (element) => {
+  if (isTextElement(element)) {
     return `TEXT_ELEMENT ${element.props.nodeValue}`;
   }
 
-  if (typeof element.type === "function") {
+  if (isComponentElement(element)) {
     return element.type.name;
   }
 
@@ -92,15 +96,26 @@ export function withPerformanceUpdate(fn, name = fn.name) {
   };
 }
 
-export function withPerformanceDomChange(fn) {
-  return function (args) {
-    const element = args?.instance?.element ?? args?.element;
+interface ParamsInstance {
+  instance: Instance;
+  element?: Element;
+}
+interface ParamsElement {
+  instance?: Instance;
+  element: Element;
+}
+type Params = ParamsInstance | ParamsElement;
+type PerformanceWrapper = (params: Params) => unknown;
+type WithPerformanceDomChange = <T extends PerformanceWrapper>(fn: T) => T;
+export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
+  const performanceWrapper: PerformanceWrapper = (params) => {
+    const element = params?.instance?.element ?? params?.element;
     const id = element.__id ?? element.__id;
 
     const elementName = getElementName(element);
 
     performance.mark(`${elementName} start DOM update (${id})`);
-    const result = fn(args);
+    const result = fn(params);
 
     // actual DOM update happens asyncronically after the code run at least in the next frame
     window.requestAnimationFrame(() => {
@@ -119,4 +134,6 @@ export function withPerformanceDomChange(fn) {
 
     return result;
   };
+
+  return performanceWrapper;
 }

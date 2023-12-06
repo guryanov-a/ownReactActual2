@@ -1,12 +1,11 @@
 import { identity } from "ramda";
 import {
-  instantiate,
-  InvalidTypeError,
-  InvalidInputError
+  instantiate
 } from "../instantiate";
 import { updateDomProperties } from "../updateDomProperties";
 import { createPublicInstance } from "../createPublicInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
+import { ComponentElement } from "../../types/types";
 
 vi.mock("../updateDomProperties");
 vi.mock("../createPublicInstance");
@@ -87,14 +86,14 @@ describe("instantiate", () => {
     }
     vi.spyOn(MockClassComponent.prototype, "render");
     const isPrototypeOfSpy = vi
-      .spyOn(OwnReactComponent, "isPrototypeOf")
+      .spyOn(Object.prototype, "isPrototypeOf")
       .mockReturnValue(true);
 
-    createPublicInstance.mockImplementation(() => new MockClassComponent());
+    vi.mocked(createPublicInstance).mockImplementation(() => new MockClassComponent());
 
     const element = {
       type: MockClassComponent
-    };
+    } as unknown as ComponentElement;
 
     const instance = instantiate(element);
 
@@ -114,56 +113,5 @@ describe("instantiate", () => {
     expect(instance).toStrictEqual(expectedInstance);
 
     isPrototypeOfSpy.mockRestore();
-  });
-
-  test("error: invalid type", () => {
-    const element = {
-      type: 1
-    };
-
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementationOnce(() => {});
-    const result = instantiate(element);
-
-    expect(console.error).toHaveBeenCalledWith(expect.any(InvalidTypeError));
-    expect(result).toBeUndefined();
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  const testCases = [
-    [null, undefined],
-    [undefined, undefined],
-    [0, undefined],
-    [false, undefined],
-    ["", undefined],
-    [NaN, undefined],
-    [{}, undefined],
-    [{ type: null }, undefined],
-    [{ type: 0 }, undefined],
-    [{ type: false }, undefined],
-    [{ type: "" }, undefined],
-    [{ type: NaN }, undefined]
-  ];
-
-  describe("errors: wrong input", () => {
-    // use test.each to iterate over the test cases and run your function with each value of initialElement
-    it.each(testCases)(
-      "error: wrong input with input = %p",
-      (initialElement, expectedType) => {
-        const consoleErrorSpy = vi
-          .spyOn(console, "error")
-          .mockImplementationOnce(() => {});
-        const result = instantiate(initialElement);
-
-        expect(result).toBe(expectedType);
-        expect(console.error).toHaveBeenCalledWith(
-          expect.any(InvalidInputError)
-        );
-
-        consoleErrorSpy.mockRestore();
-      }
-    );
   });
 });

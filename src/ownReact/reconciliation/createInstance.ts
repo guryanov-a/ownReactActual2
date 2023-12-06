@@ -7,10 +7,13 @@ interface Params {
   container: HTMLElement;
   element: Element;
 }
-type CreateInstance = (params: Params) => Instance;
+type CreateInstance = (params: Params) => Instance | null;
 const createInstance: CreateInstance = ({ container, element }) => {
-  const instance: Instance = instantiate(element);
-  container.appendChild(instance.dom);
+  const instance = instantiate(element);
+  
+  if (instance !== null) {
+    container.appendChild(instance.dom);
+  }
 
   if (isComponentInstance(instance)) {
     instance.publicInstance.componentDidMount &&

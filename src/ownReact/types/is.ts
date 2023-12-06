@@ -1,16 +1,16 @@
 import { OwnReactComponent } from "../OwnReactComponent";
 import { ComponentElement, ComponentInstance, DomElement, Element, Instance, TextElement } from "./types";
 
-export function isComponentInstance(instance: Instance): instance is ComponentInstance {
-    return isComponentElement(instance.element);
-};
+export function isComponentInstance(instance: Instance | null): instance is ComponentInstance {
+    return !!instance && isComponentElement(instance.element);
+}
 
 export function isComponentElement(element: Element): element is ComponentElement {
     return Object.prototype.isPrototypeOf.call(
         OwnReactComponent,
         element.type
     );
-};
+}
 
 export function isDomElement(element: Element): element is DomElement {
     const { type } = element;

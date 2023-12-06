@@ -10,12 +10,12 @@ export interface TextElement {
 
 export interface DomElement {
     type: string;
-    props: Record<string, any>;
+    props: ParamsProps;
 }
 
 export interface ComponentElement {
     type: OwnReactExtendedClass;
-    props: Record<string, any>;
+    props: ParamsProps;
 }
 
 export type Element = DomElement | ComponentElement | TextElement;
@@ -45,16 +45,11 @@ export type Instance = ComponentInstance | DomInstance | TextInstance;
 export interface TextElementProps {
     nodeValue: string;
 }
-export interface DomElementProps {
-    key?: string;
-    [key: string]: any;
-}
-export interface ComponentProps extends ComponentInputProps {
-    children?: Element[];
-}
-export interface ComponentInputProps {
+export interface ArgsProps {
     key?: string;
     [key: string]: unknown;
 }
-
-export type ElementProps = TextElementProps | DomElementProps | ComponentProps;
+export interface ParamsProps extends ArgsProps {
+    children?: Element[];
+}
+export type ElementProps = TextElementProps | ParamsProps;

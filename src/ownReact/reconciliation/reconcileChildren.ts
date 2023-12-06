@@ -1,10 +1,14 @@
+import { Instance, DomInstance, DomElement } from "../types/types";
 import { reconcile } from "./reconcile";
 
-export const reconcileChildren = (instance, element) => {
+interface Params {
+  instance: DomInstance;
+  element: DomElement;
+}
+type ReconcileChildren = (params: Params) => Instance[];
+export const reconcileChildren: ReconcileChildren = ({ instance, element }) => {
   const { dom, childInstances } = instance;
-  const {
-    props: { children = [] }
-  } = element;
+  const children = element?.props?.children ?? [];
   const newChildInstances = [];
   const count = Math.max(childInstances.length, children.length);
 
