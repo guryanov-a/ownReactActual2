@@ -6,6 +6,9 @@ export default defineConfig({
     environment: 'jsdom',
     server: {
       sourcemap: true,
+    },
+    coverage: {
+      reporter: 'lcov',
     }
   },
 })

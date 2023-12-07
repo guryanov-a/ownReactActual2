@@ -1,11 +1,12 @@
 import { renderDom } from "../renderDom";
 import { reconcile } from "../reconciliation/reconcile";
+import {DomInstance} from "../types/types.ts";
 
 vi.mock("../reconciliation/reconcile");
 
 describe("renderDom", () => {
   test("renderDom", () => {
-    const Component = mock();
+    const Component = vi.fn();
 
     const container = {
       tagName: "container"
@@ -20,11 +21,11 @@ describe("renderDom", () => {
       dom: {},
       element: expectedElement,
       childInstances: []
-    };
+    } as unknown as DomInstance;
 
-    reconcile.mockReturnValue(expectedInstance);
+    vi.mocked(reconcile).mockReturnValue(expectedInstance);
 
-    const result = renderDom(<Component />, container);
+    const result = renderDom({ element: <Component />, container });
     expect(reconcile).toHaveBeenCalledWith(container, null, expectedElement);
     expect(result).toStrictEqual(expectedInstance);
   });

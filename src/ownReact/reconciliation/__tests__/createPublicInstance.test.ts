@@ -1,11 +1,13 @@
-import createPublicInstance from "../createPublicInstance";
+import { createPublicInstance } from "../createPublicInstance";
+import {ArgsProps, ComponentElement, ComponentInstance} from "../../types/types.ts";
 
 describe("createPublicInstance", () => {
   test("create public instance of a component", () => {
     // Arrange
     const element = {
       type: class {
-        constructor(props) {
+        props: ArgsProps;
+        constructor(props: ArgsProps) {
           this.props = props;
         }
       },
@@ -13,11 +15,12 @@ describe("createPublicInstance", () => {
         name: "John",
         surname: "Doe"
       }
-    };
-    const internalInstance = {};
+    } as unknown as ComponentElement;
+
+    const internalInstance = {} as ComponentInstance;
 
     // Act
-    const publicInstance = createPublicInstance(element, internalInstance);
+    const publicInstance = createPublicInstance({ element, instance: internalInstance });
 
     // Assert
     expect(publicInstance).toBeInstanceOf(element.type);
