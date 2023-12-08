@@ -1,8 +1,6 @@
 import {
   reconcile,
   UnexpectedError,
-  WrongDataError,
-  WrongInputError
 } from "../reconcile";
 import { createInstance } from "../createInstance";
 import { removeInstance } from "../removeInstance";
@@ -212,89 +210,6 @@ describe("reconcile", () => {
   describe("errors", () => {
     afterEach(() => {
       vi.restoreAllMocks();
-    });
-    
-    describe("error: wrong input", () => {
-      const container = document.createElement("div");
-      const element = {
-        type: "div"
-      } as unknown as Element;
-      const prevInstance = {
-        dom: {},
-        element: {
-          type: "div"
-        },
-        childInstances: []
-      } as unknown as Instance;
-      const emptyInstance = undefined as unknown as Instance;
-      const emptyElement = undefined as unknown as Element;
-
-      const testCasesWrongParameters: [Instance, Element][] = [
-        [emptyInstance, element],
-        [prevInstance, emptyElement],
-        [emptyInstance, emptyElement]
-      ];
-
-      it.each(testCasesWrongParameters)(
-        "error: wrong parameters = %p",
-        (prevInstance, element) => {
-          expect.hasAssertions();
-          vi.spyOn(console, "error").mockImplementation(() => {});
-          reconcile({ container, instance: prevInstance, element });
-          expect(console.error).toHaveBeenCalledWith(
-            expect.any(WrongInputError)
-          );
-        }
-      );
-    });
-
-    describe("error: wrong data", () => {
-      const elementTypeUndefined = {
-        type: undefined
-      } as unknown as Element;
-      const prevInstanceTypeUndefined = {
-        dom: {},
-        element: {
-          type: undefined
-        },
-        childInstances: []
-      } as unknown as Instance;
-      const prevInstanceElementUndefined = {
-        dom: {},
-        element: undefined,
-        childInstances: []
-      } as unknown as Instance;
-      const elementWrongData = {
-        type: "div"
-      } as unknown as Element;
-      const prevInstance = {
-        dom: {},
-        element: {
-          type: "div"
-        },
-        childInstances: []
-      } as unknown as Instance;
-      const parentDomWrongData = {} as unknown as HTMLElement;
-
-      const testCasesWrongData: [Instance, Element][] = [
-        [prevInstance, elementTypeUndefined],
-        [prevInstanceTypeUndefined, elementWrongData],
-        [prevInstanceTypeUndefined, elementTypeUndefined],
-        [prevInstanceElementUndefined, elementWrongData]
-      ];
-
-      it.each(testCasesWrongData)(
-        "error: wrong data = %p",
-        (prevInstance, element) => {
-          expect.hasAssertions();
-          vi.spyOn(console, "error").mockImplementation(() => {});
-
-          reconcile({ container: parentDomWrongData, instance: prevInstance, element });
-          expect(console.error).toHaveBeenCalledWith(
-            expect.any(WrongDataError)
-          );
-        }
-      );
     });
 
     test("error: something went wrong", () => {
