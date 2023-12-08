@@ -13,7 +13,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
+    
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -22,6 +22,7 @@
     "types": ["vitest/globals"],
     "sourceMap": true
   },
-  "include": ["src"],
+  "include": ["./src"],
+  "exclude": ["./coverage"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

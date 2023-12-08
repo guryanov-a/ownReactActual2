@@ -1,4 +1,4 @@
-import { updateInstance } from "../updateInstance";
+import { updateDomInstance } from "../updateInstance";
 import { updateDomProperties } from "../updateDomProperties";
 import { reconcileChildren } from "../reconcileChildren";
 
@@ -128,7 +128,7 @@ describe("updateInstance", () => {
     });
     vi.mocked(reconcileChildren).mockReturnValue(expectedChildInstances);
 
-    const nextInstance = updateInstance({ instance: initialInstance, element });
+    const nextInstance = updateDomInstance({ instance: initialInstance, element });
     expect(nextInstance).toStrictEqual(expectedInstance);
   });
 });

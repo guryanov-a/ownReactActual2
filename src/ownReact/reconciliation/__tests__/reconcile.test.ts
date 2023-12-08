@@ -6,7 +6,7 @@ import {
 } from "../reconcile";
 import { createInstance } from "../createInstance";
 import { removeInstance } from "../removeInstance";
-import { updateInstance } from "../updateInstance";
+import { updateDomInstance } from "../updateInstance";
 import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
@@ -78,7 +78,7 @@ describe("reconcile", () => {
       childInstances: []
     } as unknown as Instance;
 
-    vi.mocked(updateInstance).mockReturnValue(updatedInstance);
+    vi.mocked(updateDomInstance).mockReturnValue(updatedInstance);
 
     const result = reconcile({ container, instance: prevInstance, element });
     expect(result).toStrictEqual(updatedInstance);
@@ -105,7 +105,7 @@ describe("reconcile", () => {
       ]
     };
 
-   vi.mocked(updateInstance).mockReturnValue(updatedInstance);
+   vi.mocked(updateDomInstance).mockReturnValue(updatedInstance);
 
     const container = document.createElement("div");
     const element = {
@@ -120,7 +120,7 @@ describe("reconcile", () => {
     } as unknown as Instance;
 
     const result = reconcile({ container, instance: prevInstance, element });
-    expect(updateInstance).toHaveBeenCalledWith({ instance: prevInstance, element });
+    expect(updateDomInstance).toHaveBeenCalledWith({ instance: prevInstance, element });
     expect(result).toStrictEqual(updatedInstance);
   });
 

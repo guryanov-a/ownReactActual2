@@ -1,6 +1,6 @@
 import { createInstance } from "./createInstance";
 import { removeInstance } from "./removeInstance";
-import { updateInstance } from "./updateInstance";
+import { updateDomInstance } from "./updateInstance";
 import { replaceInstance } from "./replaceInstance";
 import { updateComponentInstance } from "./updateComponentInstance/updateComponentInstance";
 import { updateTextInstance } from "./updateTextInstance";
@@ -52,7 +52,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
 
   // update instance in case if the element for the update is simple
   if (typeof element.type === "string") {
-    return updateInstance({ instance, element });
+    return updateDomInstance({ instance, element });
   }
 
   // update component instance

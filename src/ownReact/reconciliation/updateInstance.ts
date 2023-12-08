@@ -7,14 +7,14 @@ interface Params {
   instance: DomInstance;
   element: DomElement;
 }
-type UpdateInstance = (params: Params) => Instance;
-const updateInstance: UpdateInstance = ({ instance, element }) => {
+type UpdateDomInstance = (params: Params) => Instance;
+const updateDomInstance: UpdateDomInstance = ({ instance, element }) => {
   updateDomProperties(instance.dom, instance.element.props, element.props);
   instance.childInstances = reconcileChildren({ instance, element });
   instance.element = element;
   return instance;
 };
 
-const updateInstanceHofed = withPerformanceDomChange(updateInstance);
+const updateInstanceHofed = withPerformanceDomChange(updateDomInstance);
 
-export { updateInstanceHofed as updateInstance };
+export { updateInstanceHofed as updateDomInstance };

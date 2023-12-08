@@ -1,5 +1,6 @@
 import { reconcileChildren } from "../reconcileChildren";
 import { reconcile } from "../reconcile";
+import { DomInstance } from "../../types/types";
 
 vi.mock("../reconcile");
 
@@ -8,7 +9,7 @@ describe("reconcileChildren", () => {
     const instance = {
       dom: document.createElement("div"),
       childInstances: []
-    };
+    } as unknown as DomInstance;
     const element = {
       type: "div",
       props: {
@@ -33,11 +34,13 @@ describe("reconcileChildren", () => {
       { dom: document.createElement("div") }
     ];
 
-    reconcile.mockImplementation(() => ({
+    const domInstance = {
       dom: document.createElement("div")
-    }));
+    } as unknown as DomInstance;
 
-    const newChildInstances = reconcileChildren(instance, element);
+    vi.mocked(reconcile).mockReturnValue(domInstance);
+
+    const newChildInstances = reconcileChildren({ instance, element });
     expect(newChildInstances).toStrictEqual(expectedChildInstances);
   });
 });

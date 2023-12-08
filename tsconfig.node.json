@@ -6,7 +6,8 @@
     "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
     "types": ["vitest/globals"],
-    "sourceMap": true
+    "sourceMap": true,
   },
-  "include": ["vite.config.ts"]
+  "include": ["./src"],
+  "exclude": ["./coverage"]
 }
