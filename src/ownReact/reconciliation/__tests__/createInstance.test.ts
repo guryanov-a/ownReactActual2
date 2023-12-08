@@ -1,5 +1,6 @@
+import { DomElement, DomInstance } from "../../types/types";
 import { createInstance } from "../createInstance";
-import instantiate from "../instantiate";
+import { instantiate } from "../instantiate";
 
 vi.mock("../instantiate");
 
@@ -18,7 +19,7 @@ describe("createInstance", () => {
           }
         ]
       }
-    };
+    } as unknown as DomElement;
 
     const expectedInstanceDom = document.createElement("div");
     const expectedInstanceDomChild1 = document.createElement("span");
@@ -42,13 +43,11 @@ describe("createInstance", () => {
           }
         }
       ]
-    };
+    } as unknown as DomInstance;
 
-    instantiate.mockImplementation(() => {
-      return expectedInstance;
-    });
+    vi.mocked(instantiate).mockReturnValue(expectedInstance);
 
-    const instance = createInstance(container, element);
+    const instance = createInstance({ container, element });
 
     expect(instance).toStrictEqual(expectedInstance);
     expect(container.innerHTML).toStrictEqual(

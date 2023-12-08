@@ -103,8 +103,7 @@ describe("instantiate", () => {
         element: {
           type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
-        },
-        childInstances: []
+        }
       }
     };
     expect(instance).toStrictEqual(expectedInstance);
