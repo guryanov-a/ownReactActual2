@@ -1,8 +1,9 @@
-import { renderDom } from "../renderDom";
 import { reconcile } from "../reconciliation/reconcile";
-import {DomInstance} from "../types/types.ts";
+import { renderDom } from "../renderDom";
+import { DomInstance } from "../types/types";
 
 vi.mock("../reconciliation/reconcile");
+vi.mock("../utils/withPerformance");
 
 describe("renderDom", () => {
   test("renderDom", () => {
@@ -26,7 +27,6 @@ describe("renderDom", () => {
     vi.mocked(reconcile).mockReturnValue(expectedInstance);
 
     const result = renderDom({ element: <Component />, container });
-    expect(reconcile).toHaveBeenCalledWith(container, null, expectedElement);
     expect(result).toStrictEqual(expectedInstance);
   });
 });

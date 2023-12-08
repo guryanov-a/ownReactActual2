@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "node vitest-wrapper.js"
   },
   "dependencies": {
     "ramda": "^0.29.1",
@@ -25,6 +25,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",
     "@vitest/coverage-v8": "^1.0.2",
+    "@vitest/ui": "^1.0.2",
     "bun": "^1.0.7",
     "bun-types": "^1.0.7",
     "eslint": "^8.45.0",

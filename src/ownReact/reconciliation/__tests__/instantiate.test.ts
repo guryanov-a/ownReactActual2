@@ -1,11 +1,9 @@
 import { identity } from "ramda";
-import {
-  instantiate
-} from "../instantiate";
-import { updateDomProperties } from "../updateDomProperties";
-import { createPublicInstance } from "../createPublicInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
-import { ComponentElement } from "../../types/types";
+import { ComponentElement, DomElement } from "../../types/types";
+import { createPublicInstance } from "../createPublicInstance";
+import { instantiate } from "../instantiate";
+import { updateDomProperties } from "../updateDomProperties";
 
 vi.mock("../updateDomProperties");
 vi.mock("../createPublicInstance");
@@ -26,7 +24,7 @@ describe("instantiate", () => {
           }
         ]
       }
-    };
+    } as unknown as DomElement;
 
     const expectedInstanceDom = document.createElement("div");
     const expectedInstanceDomChild1 = document.createElement("span");

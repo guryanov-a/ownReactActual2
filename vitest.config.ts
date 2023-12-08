@@ -1,14 +1,11 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "happy-dom",
     server: {
       sourcemap: true,
-    },
-    coverage: {
-      reporter: 'lcov',
     }
   },
 })
