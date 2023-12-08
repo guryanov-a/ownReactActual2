@@ -64,8 +64,7 @@ describe("instantiate", () => {
     };
     const expectedInstance = {
       dom: document.createTextNode("foo"),
-      element,
-      childInstances: []
+      element
     };
 
     const instance = instantiate(element);
