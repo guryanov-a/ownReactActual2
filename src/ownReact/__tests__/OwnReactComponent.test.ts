@@ -1,4 +1,5 @@
-import { OwnReactComponent, InvalidChildError } from "../OwnReactComponent";
+import { OwnReactComponent } from "../OwnReactComponent";
+import { ComponentElement, ComponentInstance, Instance } from "../types/types";
 import { updateComponent } from "../updateComponent";
 
 vi.mock("../updateComponent");
@@ -19,34 +20,39 @@ describe("ownReactComponent", () => {
   describe("setState", () => {
     test("object", () => {
       expect.hasAssertions();
-      const component = new OwnReactComponent();
-      component.__internalInstance = {
-        dom: {
-          tagName: "updatedDom"
-        },
-        element,
-        childInstances: ["updatedChildInstances"]
-      };
+      class TestComponent extends OwnReactComponent {
+        render() {
+          return null;
+        }
+      }
+      const component = new TestComponent();
       const element = {
         type: "div",
         props: {
           id: "test"
         }
-      };
+      } as unknown as ComponentElement;
+      component.__internalInstance = {
+        dom: {
+          tagName: "updatedDom"
+        } as unknown as HTMLElement,
+        element,
+        childInstance: {} as unknown as Instance
+      } as unknown as ComponentInstance;
 
-      updateComponent.mockImplementation(internalInstance => {
+      vi.mocked(updateComponent).mockImplementation(({ instance: internalInstance }) => {
         internalInstance.dom = {
           tagName: "updatedDom"
         };
         internalInstance.element = element;
-        internalInstance.childInstances = ["updatedChildInstances"];
+        internalInstance.childInstance = {} as unknown as Instance;
       });
 
       component.setState({ test: "test" });
       expect(component.state).toStrictEqual({ test: "test" });
-      expect(updateComponent).toHaveBeenCalledWith(
-        component.__internalInstance
-      );
+      expect(updateComponent).toHaveBeenCalledWith({
+        instance: component.__internalInstance
+      });
     });
 
     test("function", () => {
@@ -80,72 +86,6 @@ describe("ownReactComponent", () => {
       expect(updateComponent).toHaveBeenCalledWith(
         component.__internalInstance
       );
-    });
-  });
-
-  describe("createElement", () => {
-    test("object child", () => {
-      expect.hasAssertions();
-      const element = OwnReactComponent.createElement(
-        "div",
-        { id: "test" },
-        { type: "div", props: { id: "test" } }
-      );
-      expect(element).toStrictEqual({
-        type: "div",
-        props: {
-          id: "test",
-          children: [
-            {
-              type: "div",
-              props: {
-                id: "test"
-              }
-            }
-          ]
-        }
-      });
-    });
-
-    test("string", () => {
-      expect.hasAssertions();
-      const element = OwnReactComponent.createElement(
-        "div",
-        { id: "test" },
-        "Hello world!"
-      );
-      expect(element).toStrictEqual({
-        type: "div",
-        props: {
-          id: "test",
-          children: [
-            {
-              type: "TEXT_ELEMENT",
-              props: {
-                nodeValue: "Hello world!"
-              }
-            }
-          ]
-        }
-      });
-    });
-
-    test("invalidChildError", () => {
-      expect.hasAssertions();
-      vi.spyOn(console, "error").mockImplementation();
-      const element = OwnReactComponent.createElement("div", { id: "test" }, 1);
-
-      expect(element).toStrictEqual({
-        type: "div",
-        props: {
-          id: "test",
-          children: []
-        }
-      });
-      expect(console.error).toHaveBeenCalledWith(expect.any(InvalidChildError));
-
-      // restore original console.error
-      delete console.error;
     });
   });
 });
