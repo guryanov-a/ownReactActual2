@@ -5,7 +5,13 @@ vi.mock("../updateComponent");
 
 describe("ownReactComponent", () => {
   test("constructor", () => {
-    const component = new OwnReactComponent();
+    class TestComponent extends OwnReactComponent {
+      render() {
+        return null;
+      }
+    }
+
+    const component = new TestComponent();
     expect(component.props).toStrictEqual({});
     expect(component.state).toStrictEqual({});
   });
