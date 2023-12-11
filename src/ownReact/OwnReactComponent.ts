@@ -11,6 +11,7 @@ export abstract class OwnReactComponent {
   state: ComponentState;
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;
+  componentDidUpdate?: () => void;
   __internalInstance: InternalInstance;
   abstract render(): Element | null;
 

@@ -1,20 +1,29 @@
 import type { OwnReactExtendedClass, OwnReactComponent } from "../OwnReactComponent";
 
+// types
+type TextElementType = "TEXT_ELEMENT";
+type DomElementType = string;
+type ComponentElementType = OwnReactExtendedClass;
+type ElementType = TextElementType | DomElementType | ComponentElementType;
+
 // elements
-export interface TextElement {
-    type: "TEXT_ELEMENT";
+interface BaseElement {
+    __id: number;
+}
+export interface TextElement extends BaseElement {
+    type: TextElementType;
     props: {
         nodeValue: string;
     };
 }
 
-export interface DomElement {
-    type: string;
+export interface DomElement extends BaseElement {
+    type: DomElementType;
     props: ParamsProps;
 }
 
-export interface ComponentElement {
-    type: OwnReactExtendedClass;
+export interface ComponentElement extends BaseElement {
+    type: ComponentElementType;
     props: ParamsProps;
 }
 

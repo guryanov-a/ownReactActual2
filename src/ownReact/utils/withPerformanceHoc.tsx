@@ -2,12 +2,14 @@ import { OwnReactComponent } from "../OwnReactComponent";
 
 export function withPerformanceHoc(Component, name = Component.name) {
   return class extends OwnReactComponent {
-    componentDidMount() {
+    startTime: number;
+
+    componentDidMount = () => {
       // Measure the start time
       this.startTime = performance.now();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate = () => {
       // Measure the end time
       const endTime = performance.now();
 
