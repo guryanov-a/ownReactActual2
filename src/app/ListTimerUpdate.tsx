@@ -37,8 +37,6 @@ const updateAlphabetState = state => {
   const newAlphabet = [...state.alphabet];
   const randomLength = Math.floor(Math.random() * newAlphabet.length);
 
-  console.log("randomLength", randomLength);
-
   for (let i = 0; i < randomLength; i += 1) {
     const randomIndex1 = Math.floor(Math.random() * newAlphabet.length);
     const randomIndex2 = Math.floor(Math.random() * newAlphabet.length);

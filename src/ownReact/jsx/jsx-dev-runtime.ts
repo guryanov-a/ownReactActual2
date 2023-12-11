@@ -1,8 +1,6 @@
 import { nanoid } from "nanoid";
 import { jsx as _jsx } from "react/jsx-runtime";
 
-export class InvalidChildError extends Error {}
-
 export function jsxDEV(...args) {
   const element = _jsx(...args);
 
