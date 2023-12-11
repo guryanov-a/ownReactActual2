@@ -57,23 +57,28 @@ describe("ownReactComponent", () => {
 
     test("function", () => {
       expect.hasAssertions();
-      const component = new OwnReactComponent();
-      component.__internalInstance = {
-        dom: {
-          tagName: "updatedDom"
-        },
-        element,
-        childInstances: ["updatedChildInstances"]
-      };
-      component.state = { test: "" };
+      class TestComponent extends OwnReactComponent {
+        render() {
+          return null;
+        }
+      }
+      const component = new TestComponent();
       const element = {
         type: "div",
         props: {
           id: "test"
         }
-      };
+      } as unknown as ComponentElement;
+      component.__internalInstance = {
+        dom: {
+          tagName: "updatedDom"
+        } as unknown as HTMLElement,
+        element,
+        childInstance: {} as unknown as Instance
+      } as unknown as ComponentInstance;
+      component.state = { test: "" };
 
-      updateComponent.mockImplementation(internalInstance => {
+      vi.mocked(updateComponent).mockImplementation(({ instance: internalInstance }) => {
         internalInstance.dom = {
           tagName: "updatedDom"
         };
@@ -83,9 +88,9 @@ describe("ownReactComponent", () => {
 
       component.setState(prevState => ({ test: prevState.test + "test" }));
       expect(component.state).toStrictEqual({ test: "test" });
-      expect(updateComponent).toHaveBeenCalledWith(
-        component.__internalInstance
-      );
+      expect(updateComponent).toHaveBeenCalledWith({
+        instance: component.__internalInstance
+      });
     });
   });
 });
