@@ -7,7 +7,7 @@
     "Start": {
       "name": "Start",
       "command": "vite dev",
-      "runAtStart": false,
+      "runAtStart": true,
       "preview": {
         "port": 5173
       }

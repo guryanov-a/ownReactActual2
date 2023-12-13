@@ -4,8 +4,8 @@ import { updateDomInstance } from "./updateInstance";
 import { replaceInstance } from "./replaceInstance";
 import { updateComponentInstance } from "./updateComponentInstance/updateComponentInstance";
 import { updateTextInstance } from "./updateTextInstance";
-import { Element, Instance } from "../types/types";
-import { isComponentInstance } from "../types/is";
+import { ComponentElement, ComponentInstance, DomElement, DomInstance, Element, Instance, TextElement, TextInstance } from "../types/types";
+import { isComponentElement, isComponentInstance, isDomElement, isDomInstance, isTextElement, isTextInstance } from "../types/is";
 
 export class UnexpectedError extends Error {}
 
@@ -21,15 +21,32 @@ export interface ParamsToRemove {
   element: null;
 }
 
-export interface ParamsToUpdate {
+export interface ParamsToUpdateText {
   container: HTMLElement;
-  instance: Instance;
-  element: Element;
+  instance: TextInstance;
+  element: TextElement;
+}
+
+export interface ParamsToUpdateDom {
+  container: HTMLElement;
+  instance: DomInstance;
+  element: DomElement;
+}
+
+export interface ParamsToUpdateComponent {
+  container: HTMLElement;
+  instance: ComponentInstance;
+  element: ComponentElement;
 }
 
 // choosing what to do with the instance
-export type Params = ParamsToInitialize | ParamsToUpdate | ParamsToRemove;
-export type Reconcile = <T extends Params>(params: T) => Instance;
+type Reconcile = {
+  (params: ParamsToInitialize): Instance;
+  (params: ParamsToRemove): null;
+  (params: ParamsToUpdateText): TextInstance;
+  (params: ParamsToUpdateDom): DomInstance;
+  (params: ParamsToUpdateComponent): ComponentInstance;
+}
 export const reconcile: Reconcile = ({ container, instance, element }) => {
   // clean up after removing
   if (element === null) {
@@ -43,23 +60,20 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
 
   // replace instance in case of major changes
   if (instance.element.type !== element.type) {
-    return replaceInstance({container, element});
+    return replaceInstance({ container, element });
   }
 
-  if (element.type === "TEXT_ELEMENT") {
-    return updateTextInstance({instance, element});
+  if (isTextElement(element) && isTextInstance(instance)) {
+    return updateTextInstance({ instance, element });
   }
 
   // update instance in case if the element for the update is simple
-  if (typeof element.type === "string") {
+  if (isDomInstance(instance) && isDomElement(element)) {
     return updateDomInstance({ instance, element });
   }
 
   // update component instance
-  if (
-    instance.element.type === element.type &&
-    isComponentInstance(instance)
-  ) {
+  if (isComponentInstance(instance) && isComponentElement(element)) {
     if (
       typeof instance.publicInstance?.shouldComponentUpdate === "function" 
       && !instance.publicInstance.shouldComponentUpdate()

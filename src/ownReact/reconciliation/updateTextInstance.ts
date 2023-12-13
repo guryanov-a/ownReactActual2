@@ -1,10 +1,17 @@
+import { TextElement, TextInstance } from "../types/types";
 import { withPerformanceDomChange } from "../utils/withPerformance";
 
-const updateDomText = withPerformanceDomChange(({ instance, element }) => {
+type UpdateDomText = (params: Params) => void;
+const updateDomText: UpdateDomText = withPerformanceDomChange(({ instance, element }) => {
   instance.dom.nodeValue = element.props.nodeValue;
 });
 
-export const updateTextInstance = ({instance, element}) => {
+interface Params {
+  instance: TextInstance;
+  element: TextElement;
+}
+type UpdateTextInstance = (params: Params) => TextInstance;
+export const updateTextInstance: UpdateTextInstance = ({instance, element}) => {
   const isTheSameTextElement =
     instance.element.type === "TEXT_ELEMENT" &&
     instance.element.props.nodeValue === element.props.nodeValue;

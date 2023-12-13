@@ -1,10 +1,15 @@
 import { reconcile } from "./reconciliation/reconcile";
+import { ComponentInstance } from "./types/types";
 import { withPerformanceUpdate } from "./utils/withPerformance";
 
-const updateComponent = (internalInstance) => {
-  const parentDom = internalInstance.dom.parentNode;
+interface Params {
+  instance: ComponentInstance;
+}
+type UpdateComponent = (params: Params) => ComponentInstance;
+const updateComponent: UpdateComponent = ({ instance: internalInstance }) => {
+  const parentDom = internalInstance.dom.parentNode  as HTMLElement;
   const { element } = internalInstance;
-  return reconcile({container: parentDom, instance: internalInstance, element});
+  return reconcile({ container: parentDom, instance: internalInstance, element });
 };
 
 const updateComponentHofed = withPerformanceUpdate(
