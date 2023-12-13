@@ -74,10 +74,7 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
 
   // update component instance
   if (isComponentInstance(instance) && isComponentElement(element)) {
-    if (
-      typeof instance.publicInstance?.shouldComponentUpdate === "function" 
-      && !instance.publicInstance.shouldComponentUpdate()
-    ) {
+    if (!instance.publicInstance.shouldComponentUpdate()) {
       return instance;
     }
 

@@ -3,6 +3,6 @@ import { ListManualUpdate } from "./ListManualUpdate";
 
 export class App extends OwnReactComponent {
   render() {
-    return <ListManualUpdate />;
+    return <ListManualUpdate key="1" />;
   }
 }

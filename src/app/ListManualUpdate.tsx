@@ -49,31 +49,30 @@ const updateAlphabetState = state => {
   };
 };
 
+interface Props {}
+interface State {
+  alphabet: string[];
+  unchangingLetters: Set<string>;
+  lettersToFilter: string;
+}
 /**
  * List with random letters that updated manually on button click
  * Additionally, there is an input field that define unchangeble characters and their order
  */
-export class ListManualUpdate extends OwnReactComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      alphabet,
-      unchangingLetters: new Set(),
-      lettersToFilter: ""
-    };
-
-    this.handleUpdateClick = this.handleUpdateClick.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
-  }
+export class ListManualUpdate extends OwnReactComponent<Props, State> {
+  state = {
+    alphabet,
+    unchangingLetters: new Set<string>(),
+    lettersToFilter: ""
+  };
 
   // randomly changes position of random number of letters in the alphabet
-  handleUpdateClick() {
+  handleUpdateClick = () => {
     this.setState(updateAlphabetState);
   }
 
   // changes unchangeble characters and their order
-  handleFilterChange(event) {
+  handleFilterChange = (event) => {
     const newLettersToFilter = event.target.value;
     const newUnchangingLetters = new Set(
       event.target.value.toUpperCase().split("")

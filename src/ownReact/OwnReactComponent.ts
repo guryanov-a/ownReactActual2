@@ -3,21 +3,25 @@ import { updateComponent } from "./updateComponent";
 
 export type InternalInstance = ComponentInstance | null;
 export type ChangeState = (state: ComponentState) => Partial<ComponentState>;
-export type ComponentState = Record<string, unknown>;
+export interface ComponentState {}
+export interface ComponentProps {}
 
 export type OwnReactExtendedClass = new (props: ArgsProps) => OwnReactComponent;
-export abstract class OwnReactComponent {
-  props: ParamsProps;
-  state: ComponentState;
+export abstract class OwnReactComponent<
+    P extends ComponentProps = ComponentProps, 
+    S extends ComponentState = ComponentState
+  > {
+  readonly props: P;
+  state: S;
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;
   componentDidUpdate?: () => void;
   __internalInstance: InternalInstance;
   abstract render(): Element | null;
 
-  constructor(props?: ArgsProps) {
-    this.props = props || {};
-    this.state = {};
+  constructor(props: P) {
+    this.props = props;
+    this.state = {} as S;
     this.__internalInstance = null;
   }
 
