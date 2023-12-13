@@ -1,11 +1,14 @@
+import { ReactNode } from "react";
 import { OwnReactComponent } from "../ownReact/OwnReactComponent";
 
+interface Props {
+  key: string;
+  children: ReactNode;
+}
 /**
  * List item (which is wrapper for <li>)
- * @param {string} props.children - content of list item
- * @returns {JSX.Element}
  */
-export class ListItem extends OwnReactComponent {
+export class ListItem extends OwnReactComponent<Props> {
   render() {
     return <li key={this.props.key}>{this.props.children}</li>;
   }

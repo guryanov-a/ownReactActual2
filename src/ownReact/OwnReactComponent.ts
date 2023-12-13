@@ -1,4 +1,5 @@
-import { ArgsProps, ComponentInstance, Element, ParamsProps } from "./types/types";
+import { ReactInstance } from "react";
+import { ComponentInstance } from "./types/types";
 import { updateComponent } from "./updateComponent";
 
 export type InternalInstance = ComponentInstance | null;
@@ -6,7 +7,7 @@ export type ChangeState = (state: ComponentState) => Partial<ComponentState>;
 export interface ComponentState {}
 export interface ComponentProps {}
 
-export type OwnReactExtendedClass = new (props: ArgsProps) => OwnReactComponent;
+export type OwnReactExtendedClass = new (props: Record<string, unknown>) => OwnReactComponent;
 export abstract class OwnReactComponent<
     P extends ComponentProps = ComponentProps, 
     S extends ComponentState = ComponentState
@@ -17,7 +18,10 @@ export abstract class OwnReactComponent<
   componentDidMount?: () => void;
   componentDidUpdate?: () => void;
   __internalInstance: InternalInstance;
-  abstract render(): Element | null;
+  abstract render(): JSX.Element | null;
+  forceUpdate: () => void;
+  context: unknown;
+  refs: Record<string, ReactInstance>;
 
   constructor(props: P) {
     this.props = props;

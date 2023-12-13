@@ -8,7 +8,7 @@ const instantiateClassComponent: InstantiateClassComponent = (element) => {
   // create instance of a component
   const instance = {} as ComponentInstance;
   const publicInstance = createPublicInstance({ element, instance });
-  const childElement = publicInstance.render();
+  const childElement = publicInstance.render() as unknown as Element;
 
   if (childElement === null) {
     return null;

@@ -51,7 +51,7 @@ const updateAlphabetState = state => {
 
 interface Props {}
 interface State {
-  alphabet: string[];
+  alphabet: string[] | JSX.Element;
   unchangingLetters: Set<string>;
   lettersToFilter: string;
 }
@@ -88,7 +88,7 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
     // creating list items
     // first takes unchangeble characters and their order, then adds the rest of the alphabet
     const listItems = [...this.state.unchangingLetters].map((letter, index) => {
-      return <ListItem key={index}>{letter}</ListItem>;
+      return <ListItem key={index.toString()}>{letter}</ListItem>;
     });
 
     this.state.alphabet.forEach(letter => {

@@ -4,7 +4,6 @@ import type { OwnReactExtendedClass, OwnReactComponent } from "../OwnReactCompon
 type TextElementType = "TEXT_ELEMENT";
 type DomElementType = string;
 type ComponentElementType = OwnReactExtendedClass;
-type ElementType = TextElementType | DomElementType | ComponentElementType;
 
 // elements
 interface BaseElement {
