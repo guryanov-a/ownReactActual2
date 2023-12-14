@@ -9,6 +9,7 @@ import { updateComponentInstance } from "../updateComponentInstance/updateCompon
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";
 import { ComponentElement, ComponentInstance, Element, Instance, TextElement } from "../../types/types";
+import { ReactElement } from "react";
 
 vi.mock("../createInstance");
 vi.mock("../removeInstance");
@@ -174,7 +175,7 @@ describe("reconcile", () => {
         return {
           type: "TEXT_ELEMENT",
           props: { nodeValue: "foo" }
-        } as TextElement;
+        } as unknown as ReactElement<TextElement>;
       }
     }
 
@@ -187,7 +188,7 @@ describe("reconcile", () => {
         props: { nodeValue: "bar" }
       },
       childInstances: ["updatedChildInstances"]
-    };
+    } as unknown as ComponentInstance;
 
     vi.mocked(updateComponentInstance).mockReturnValue(updatedInstance);
 
@@ -200,7 +201,8 @@ describe("reconcile", () => {
       element: {
         type: MockComponent
       },
-      childInstances: []
+      childInstances: [],
+      publicInstance: new MockComponent({})
     } as unknown as ComponentInstance;
 
     const result = reconcile({ container, instance: prevInstance, element });

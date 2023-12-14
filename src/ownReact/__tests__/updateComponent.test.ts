@@ -1,6 +1,6 @@
 import { updateComponent } from "../updateComponent";
 import { reconcile } from "../reconciliation/reconcile";
-import { DomInstance } from "../types/types";
+import { ComponentInstance, DomInstance } from "../types/types";
 
 vi.mock("../reconciliation/reconcile");
 
@@ -32,13 +32,13 @@ describe("updateComponent", () => {
       },
       element: expectedElement,
       childInstances: ["test"]
-    } as unknown as DomInstance;
+    } as unknown as ComponentInstance;
     expectedInternalInstance.dom.parentNode.innerHTML =
       '<div id="test">test</div>';
 
     vi.mocked(reconcile).mockReturnValue(expectedInternalInstance);
 
-    const result = updateComponent(internalInstance);
+    const result = updateComponent({ instance: internalInstance });
     expect(result).toStrictEqual(expectedInternalInstance);
   });
 });

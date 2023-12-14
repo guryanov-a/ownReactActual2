@@ -23,8 +23,8 @@ export abstract class OwnReactComponent<
   context: unknown;
   refs: Record<string, ReactInstance>;
 
-  constructor(props: P) {
-    this.props = props;
+  constructor(props?: P) {
+    this.props = props || ({} as P);
     this.state = {} as S;
     this.__internalInstance = null;
   }
