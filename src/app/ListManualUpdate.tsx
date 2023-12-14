@@ -87,8 +87,8 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
   render() {
     // creating list items
     // first takes unchangeble characters and their order, then adds the rest of the alphabet
-    const listItems = [...this.state.unchangingLetters].map((letter, index) => {
-      return <ListItem key={index.toString()}>{letter}</ListItem>;
+    const listItems = [...this.state.unchangingLetters].map((letter) => {
+      return <ListItem key={letter}>{letter}</ListItem>;
     });
 
     this.state.alphabet.forEach(letter => {
