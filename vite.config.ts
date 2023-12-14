@@ -9,4 +9,11 @@ export default defineConfig({
     }
   },
   plugins: [react({ jsxImportSource: 'ownReact/jsx' })],
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    },
+    cors: true,
+  }
 });

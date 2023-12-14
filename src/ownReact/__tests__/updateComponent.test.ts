@@ -1,8 +1,9 @@
 import { updateComponent } from "../updateComponent";
 import { reconcile } from "../reconciliation/reconcile";
-import { ComponentInstance, DomInstance } from "../types/types";
+import { ComponentInstance } from "../types/types";
 
 vi.mock("../reconciliation/reconcile");
+vi.mock("../utils/withPerformance");
 
 describe("updateComponent", () => {
   test("updateComponent", () => {

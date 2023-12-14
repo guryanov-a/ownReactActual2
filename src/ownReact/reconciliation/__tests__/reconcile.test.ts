@@ -13,7 +13,7 @@ import { ReactElement } from "react";
 
 vi.mock("../createInstance");
 vi.mock("../removeInstance");
-vi.mock("../updateInstance");
+vi.mock("../updateDomInstance");
 vi.mock("../replaceInstance");
 vi.mock("../updateComponentInstance/updateComponentInstance");
 vi.mock("../../utils/withPerformance");

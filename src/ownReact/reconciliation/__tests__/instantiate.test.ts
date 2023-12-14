@@ -53,7 +53,7 @@ describe("instantiate", () => {
       ]
     };
 
-    const instance = instantiate(element);
+    const instance = instantiate({element});
     expect(instance).toStrictEqual(expectedInstance);
   });
 
@@ -67,7 +67,7 @@ describe("instantiate", () => {
       element
     };
 
-    const instance = instantiate(element);
+    const instance = instantiate({element});
 
     expect(instance).toStrictEqual(expectedInstance);
   });
@@ -92,7 +92,7 @@ describe("instantiate", () => {
       type: MockClassComponent
     } as unknown as ComponentElement;
 
-    const instance = instantiate(element);
+    const instance = instantiate({element});
 
     const expectedInstance = {
       dom: document.createTextNode("foo"),

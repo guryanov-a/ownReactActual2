@@ -9,7 +9,7 @@ interface Params {
 }
 type CreateInstance = (params: Params) => Instance | null;
 const createInstance: CreateInstance = ({ container, element }) => {
-  const instance = instantiate(element);
+  const instance = instantiate({ element });
   
   if (instance !== null) {
     container.appendChild(instance.dom);

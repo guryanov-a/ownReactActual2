@@ -2,9 +2,11 @@ import { updateDomProperties } from "./updateDomProperties";
 import { createPublicInstance } from "./createPublicInstance";
 import { ComponentElement, ComponentInstance, DomElement, DomInstance, Element, Instance, TextElement, TextInstance } from "../types/types";
 import { isDomElement, isTextElement } from "../types/is";
+import { withPerformanceUpdate, withPerformanceDomChange } from "../utils/withPerformance";
 
-type InstantiateClassComponent = (element: ComponentElement) => ComponentInstance | null;
-const instantiateClassComponent: InstantiateClassComponent = (element) => {
+type InstantiateClassComponentParams = { element: ComponentElement };
+type InstantiateClassComponent = ({ element }: InstantiateClassComponentParams) => ComponentInstance | null;
+const instantiateClassComponent: InstantiateClassComponent = ({ element }) => {
   // create instance of a component
   const instance = {} as ComponentInstance;
   const publicInstance = createPublicInstance({ element, instance });
@@ -14,7 +16,10 @@ const instantiateClassComponent: InstantiateClassComponent = (element) => {
     return null;
   }
 
-  const childInstance = instantiate(childElement);
+  const childInstance = withPerformanceUpdate(
+    withPerformanceDomChange(instantiate), 
+    `Component create/${element.type.name}`
+  )({ element: childElement });
 
   if (childInstance === null) {
     return null;
@@ -30,7 +35,7 @@ const instantiateClassComponent: InstantiateClassComponent = (element) => {
   });
 
   return instance;
-}
+};
 
 type InstantiateDomElement = (element: DomElement) => DomInstance;
 const instantiateDomElement: InstantiateDomElement = (element) => {
@@ -41,7 +46,7 @@ const instantiateDomElement: InstantiateDomElement = (element) => {
   const children = props.children ? props.children : [];
   const childrenArr = Array.isArray(children) ? children : [children];
   const childInstances = childrenArr
-    .map(instantiate)
+    .map((element) => instantiate({ element }))
     .filter((childInstance): childInstance is Instance => childInstance !== null);
   const childDoms = childInstances.map(childInstance => childInstance.dom);
   childDoms.forEach(childDom => dom.appendChild(childDom));
@@ -66,13 +71,13 @@ const instantiateTextElement: InstantiateTextElement = (element) => {
   return instance;
 };
 
-export type Instantiate = (element: Element) => Instance | null;
-export const instantiate: Instantiate = (element) => {
+export type Instantiate = ({ element }: { element: Element }) => Instance | null;
+export const instantiate: Instantiate = ({ element }) => {
   if (isTextElement(element)) {
     return instantiateTextElement(element);
   } else if (isDomElement(element)) {
     return instantiateDomElement(element);
   } else { // isComponentElement(element)
-    return instantiateClassComponent(element);
+    return instantiateClassComponent({ element });
   }
 }
