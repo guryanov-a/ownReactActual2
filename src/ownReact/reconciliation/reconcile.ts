@@ -39,6 +39,12 @@ export interface ParamsToUpdateComponent {
   element: ComponentElement;
 }
 
+export interface ParamsForChildInstance {
+  container: HTMLElement;
+  instance: Instance;
+  element: Element;
+}
+
 // choosing what to do with the instance
 type Reconcile = {
   (params: ParamsToInitialize): Instance;
@@ -46,6 +52,7 @@ type Reconcile = {
   (params: ParamsToUpdateText): TextInstance;
   (params: ParamsToUpdateDom): DomInstance;
   (params: ParamsToUpdateComponent): ComponentInstance;
+  (params: ParamsForChildInstance): Instance;
 }
 export const reconcile: Reconcile = ({ container, instance, element }) => {
   // clean up after removing

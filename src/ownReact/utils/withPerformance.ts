@@ -20,6 +20,8 @@ class Profiler {
 
   clear() {
     this.entries = [];
+    performance.clearMarks();
+    performance.clearMeasures();
   }
 
   startTracking() {
@@ -111,6 +113,28 @@ export function withPerformanceUpdate(fn, name = fn.name) {
   };
 }
 
+const startDomUpdate = (element: Element) => {
+  const name = getElementName(element);
+  const id = element.__id;
+
+  if (element.parentElement) {
+    startDomUpdate(element.parentElement);
+  }
+
+  performance.mark(`${name} start DOM update (${id})`);
+}
+
+const endDomUpdate = (element: Element) => {
+  const name = getElementName(element);
+  const id = element.__id;
+  performance.mark(`${name} end DOM update (${id})`);
+
+  if (element.parentElement) {
+    endDomUpdate(element.parentElement);
+  }
+}
+
+
 interface ParamsInstance {
   instance: Instance;
   element?: Element;
@@ -131,12 +155,22 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 
     const elementName = getElementName(element);
 
+    if (element.parentElement) {
+      startDomUpdate(element.parentElement);
+    }
+
     performance.mark(`${elementName} start DOM update (${id})`);
     const result = fn(params);
     performance.mark(`${elementName} end DOM update (${id})`);
+
+    if (element.parentElement) {
+      endDomUpdate(element.parentElement);
+    }
 
     return result;
   };
 
   return performanceWrapper;
 }
+
+

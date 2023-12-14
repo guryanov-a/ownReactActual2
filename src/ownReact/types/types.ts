@@ -8,6 +8,7 @@ type ComponentElementType = OwnReactExtendedClass;
 // elements
 interface BaseElement {
     __id: number;
+    parentElement?: Element;
 }
 export interface TextElement extends BaseElement {
     type: TextElementType;

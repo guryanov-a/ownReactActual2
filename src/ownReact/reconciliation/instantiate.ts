@@ -4,22 +4,20 @@ import { ComponentElement, ComponentInstance, DomElement, DomInstance, Element, 
 import { isDomElement, isTextElement } from "../types/is";
 import { withPerformanceUpdate, withPerformanceDomChange } from "../utils/withPerformance";
 
-type InstantiateClassComponentParams = { element: ComponentElement };
+interface InstantiateClassComponentParams { element: ComponentElement }
 type InstantiateClassComponent = ({ element }: InstantiateClassComponentParams) => ComponentInstance | null;
-const instantiateClassComponent: InstantiateClassComponent = ({ element }) => {
+const instantiateClassComponent: InstantiateClassComponent = withPerformanceUpdate(({ element }) => {
   // create instance of a component
   const instance = {} as ComponentInstance;
   const publicInstance = createPublicInstance({ element, instance });
   const childElement = publicInstance.render() as unknown as Element;
+  childElement.parentElement = element;
 
   if (childElement === null) {
     return null;
   }
 
-  const childInstance = withPerformanceUpdate(
-    withPerformanceDomChange(instantiate), 
-    `Component create/${element.type.name}`
-  )({ element: childElement });
+  const childInstance = instantiate({ element: childElement });
 
   if (childInstance === null) {
     return null;
@@ -35,10 +33,10 @@ const instantiateClassComponent: InstantiateClassComponent = ({ element }) => {
   });
 
   return instance;
-};
+}, 'Component create');
 
-type InstantiateDomElement = (element: DomElement) => DomInstance;
-const instantiateDomElement: InstantiateDomElement = (element) => {
+type InstantiateDomElement = (params: { element: DomElement }) => DomInstance;
+const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({ element }) => {
   const { type, props = {} } = element;
   const domElement = document.createElement(type);
   const dom = updateDomProperties(domElement, [], props);
@@ -57,7 +55,7 @@ const instantiateDomElement: InstantiateDomElement = (element) => {
     childInstances
   };
   return instance;
-}
+});
 
 type InstantiateTextElement = (element: TextElement) => TextInstance;
 const instantiateTextElement: InstantiateTextElement = (element) => {
@@ -76,7 +74,7 @@ export const instantiate: Instantiate = ({ element }) => {
   if (isTextElement(element)) {
     return instantiateTextElement(element);
   } else if (isDomElement(element)) {
-    return instantiateDomElement(element);
+    return instantiateDomElement({element});
   } else { // isComponentElement(element)
     return instantiateClassComponent({ element });
   }

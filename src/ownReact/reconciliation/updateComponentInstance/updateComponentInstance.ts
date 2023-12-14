@@ -1,5 +1,5 @@
 import { reconcile } from "../reconcile";
-import { withPerformanceDomChange } from "../../utils/withPerformance";
+import { withPerformanceUpdate } from "../../utils/withPerformance";
 import { applyNewComponentInstanceData } from "./applyNewComponentInstanceData";
 import { prepareDataForReconciliation } from "./prepareDataForReconciliation";
 import { ComponentElement, ComponentInstance } from "../../types/types";
@@ -20,8 +20,9 @@ const updateComponentInstance: UpdateComponentInstance = (dataForUpdate) => {
   return applyNewComponentInstanceData({ instance, element, newChildInstance });
 };
 
-const updateComponentInstanceHofed = withPerformanceDomChange(
-  updateComponentInstance
+const updateComponentInstanceHofed = withPerformanceUpdate(
+  updateComponentInstance,
+  'Update component'
 );
 
 export { updateComponentInstanceHofed as updateComponentInstance };
