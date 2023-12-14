@@ -110,7 +110,7 @@ type WithPerformanceDomChange = <T extends PerformanceWrapper>(fn: T) => T;
 export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
   const performanceWrapper: PerformanceWrapper = (params) => {
     const element = params?.instance?.element ?? params?.element;
-    const id = element.__id ?? element.__id;
+    const id = element.__id;
 
     const elementName = getElementName(element);
 
@@ -120,16 +120,6 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
     // actual DOM update happens asyncronically after the code run at least in the next frame
     window.requestAnimationFrame(() => {
       performance.mark(`${elementName} end DOM update (${id})`);
-
-      const domUpdateMeasurement = performance.measure(
-        `${elementName} DOM update (${id})`,
-        `${elementName} start DOM update (${id})`,
-        `${elementName} end DOM update (${id})`,
-      );
-
-      console.log(
-        `${elementName} DOM update took: ${domUpdateMeasurement.duration} (${id})`,
-      );
     });
 
     return result;
