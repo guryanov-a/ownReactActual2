@@ -4,7 +4,7 @@ import {
 } from "../reconcile";
 import { createInstance } from "../createInstance";
 import { removeInstance } from "../removeInstance";
-import { updateDomInstance } from "../updateInstance";
+import { updateDomInstance } from "../updateDomInstance";
 import { updateComponentInstance } from "../updateComponentInstance/updateComponentInstance";
 import { replaceInstance } from "../replaceInstance";
 import { OwnReactComponent } from "../../OwnReactComponent";

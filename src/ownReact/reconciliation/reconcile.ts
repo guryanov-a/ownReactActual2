@@ -1,6 +1,6 @@
 import { createInstance } from "./createInstance";
 import { removeInstance } from "./removeInstance";
-import { updateDomInstance } from "./updateInstance";
+import { updateDomInstance } from "./updateDomInstance";
 import { replaceInstance } from "./replaceInstance";
 import { updateComponentInstance } from "./updateComponentInstance/updateComponentInstance";
 import { updateTextInstance } from "./updateTextInstance";

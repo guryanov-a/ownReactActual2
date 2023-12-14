@@ -1,4 +1,4 @@
-import { updateDomInstance } from "../updateInstance";
+import { updateDomInstance } from "../updateDomInstance";
 import { updateDomProperties } from "../updateDomProperties";
 import { reconcileChildren } from "../reconcileChildren";
 
