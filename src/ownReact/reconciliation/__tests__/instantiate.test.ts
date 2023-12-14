@@ -7,6 +7,7 @@ import { updateDomProperties } from "../updateDomProperties";
 
 vi.mock("../updateDomProperties");
 vi.mock("../createPublicInstance");
+vi.mock("../../utils/withPerformance")
 
 describe("instantiate", () => {
   vi.mocked(updateDomProperties).mockImplementation(identity);
@@ -102,7 +103,8 @@ describe("instantiate", () => {
         dom: document.createTextNode("foo"),
         element: {
           type: "TEXT_ELEMENT",
-          props: { nodeValue: "foo" }
+          props: { nodeValue: "foo" },
+          parentElement: element,
         }
       }
     };
