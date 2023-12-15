@@ -6,16 +6,20 @@ interface ProfilerEntry {
   name: ComponentNameWithId;
   reconciliation: PerformanceEntry;
   domUpdate: PerformanceEntry;
-  checks: PerformanceEntry;
+  checksForUpdate: PerformanceEntry;
 }
 
 class Profiler {
   entries: ProfilerEntry[];
   isTracking: boolean;
+  isRealTimeInfoEnabled: boolean;
+  unnecessaryUpdates: number;
 
   constructor() {
     this.entries = [];
     this.isTracking = true;
+    this.isRealTimeInfoEnabled = true;
+    this.unnecessaryUpdates = 0;
   }
 
   clear() {
@@ -34,6 +38,10 @@ class Profiler {
 
   print() {
     console.table(this.entries);
+  }
+
+  toggleRealTimeInfo() {
+    this.isRealTimeInfoEnabled = !this.isRealTimeInfoEnabled;
   }
 }
 
@@ -90,7 +98,7 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       name: `${name}/${elementName} (${id})`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
-      checks: {
+      checksForUpdate: {
         name: `${name}/${elementName} (${id})`,
         duration: checksPerformanceDuration,
         entryType: "measure",
@@ -99,15 +107,17 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       },
     });
 
-    console.log(
-      `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
-    );
-    console.log(
-      `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
-    );
-    console.log(
-      `${name}/${elementName} checks: ${checksPerformanceDuration}ms`,
-    );
+    if (window.performance_profiler.isRealTimeInfoEnabled) {
+      console.log(
+        `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
+      );
+      console.log(
+        `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
+      );
+      console.log(
+        `${name}/${elementName} checks: ${checksPerformanceDuration}ms`,
+      );
+    }
 
     return result;
   };
