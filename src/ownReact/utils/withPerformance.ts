@@ -94,7 +94,9 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       reconciliationPerformanceMeasurement.duration -
       domUpdateMeasurement.duration;
 
-    window.performance_profiler.entries.push({
+    const profiler = window.performance_profiler;
+
+    profiler.entries.push({
       name: `${name}/${elementName} (${id})`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
@@ -107,7 +109,7 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       },
     });
 
-    if (window.performance_profiler.isRealTimeInfoEnabled) {
+    if (profiler.isRealTimeInfoEnabled && profiler.isTracking) {
       console.log(
         `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
       );
