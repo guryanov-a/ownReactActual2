@@ -9,17 +9,18 @@ interface ProfilerEntry {
   checksForUpdate: PerformanceEntry;
 }
 
+type NumberOfRedundantUpdates = number;
 class Profiler {
   entries: ProfilerEntry[];
   isTracking: boolean;
   isRealTimeInfoEnabled: boolean;
-  unnecessaryUpdates: number;
+  redundantUpdatesCounters: Map<ComponentNameWithId, NumberOfRedundantUpdates>;
 
   constructor() {
     this.entries = [];
     this.isTracking = true;
     this.isRealTimeInfoEnabled = true;
-    this.unnecessaryUpdates = 0;
+    this.redundantUpdatesCounters = new Map();
   }
 
   clear() {
@@ -68,6 +69,16 @@ const getElementName: GetElementName = (element) => {
   return element.type;
 };
 
+const startCountingRedundantUpdates = (element: Element) => {
+  const name = getElementName(element);
+  const id = element.__id;
+}
+
+const endCountingRedundantUpdates = (element: Element) => {
+  const name = getElementName(element);
+  const id = element.__id;
+}
+
 export function withPerformanceUpdate(fn, name = fn.name) {
   return function (params) {
     if (!window.performance_profiler.isTracking) return fn(params);
@@ -75,9 +86,16 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     const element = params?.instance?.element ?? params?.element;
     const id = element.__id;
     const elementName = getElementName(element);
+
+    startCountingRedundantUpdates(element);
     performance.mark(`${name}/${elementName} start reconciliation (${id})`);
     const result = fn(params);
     performance.mark(`${name}/${elementName} end reconciliation (${id})`);
+    const redundantUpdates = endCountingRedundantUpdates(element);
+
+    if (element.parentElement) {
+      endCountingRedundantUpdates(element.parentElement);
+    }
 
     const reconciliationPerformanceMeasurement = performance.measure(
       `${name}/${elementName} reconciliation (${id})`,
