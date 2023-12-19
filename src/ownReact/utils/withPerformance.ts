@@ -69,16 +69,6 @@ const getElementName: GetElementName = (element) => {
   return element.type;
 };
 
-const startCountingRedundantUpdates = (element: Element) => {
-  const name = getElementName(element);
-  const id = element.__id;
-}
-
-const endCountingRedundantUpdates = (element: Element) => {
-  const name = getElementName(element);
-  const id = element.__id;
-}
-
 export function withPerformanceUpdate(fn, name = fn.name) {
   return function (params) {
     if (!window.performance_profiler.isTracking) return fn(params);
@@ -87,23 +77,17 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     const id = element.__id;
     const elementName = getElementName(element);
 
-    startCountingRedundantUpdates(element);
     performance.mark(`${name}/${elementName} start reconciliation (${id})`);
     const result = fn(params);
     performance.mark(`${name}/${elementName} end reconciliation (${id})`);
-    const redundantUpdates = endCountingRedundantUpdates(element);
-
-    if (element.parentElement) {
-      endCountingRedundantUpdates(element.parentElement);
-    }
 
     const reconciliationPerformanceMeasurement = performance.measure(
-      `${name}/${elementName} reconciliation (${id})`,
+      `${name}/${elementName} reconciliation`,
       `${name}/${elementName} start reconciliation (${id})`,
       `${name}/${elementName} end reconciliation (${id})`,
     );
     const domUpdateMeasurement = performance.measure(
-      `${elementName} DOM update (${id})`,
+      `${elementName} DOM update`,
       `${elementName} start DOM update (${id})`,
       `${elementName} end DOM update (${id})`,
     );
@@ -114,18 +98,20 @@ export function withPerformanceUpdate(fn, name = fn.name) {
 
     const profiler = window.performance_profiler;
 
-    profiler.entries.push({
-      name: `${name}/${elementName} (${id})`,
+    const profilerEntry = {
+      name: `${name}/${elementName}`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
       checksForUpdate: {
-        name: `${name}/${elementName} (${id})`,
+        name: `${name}/${elementName}`,
         duration: checksPerformanceDuration,
         entryType: "measure",
         startTime: reconciliationPerformanceMeasurement.startTime,
         toJSON: () => this.toJSON(),
       },
-    });
+    };
+
+    profiler.entries.push(profilerEntry);
 
     if (profiler.isRealTimeInfoEnabled && profiler.isTracking) {
       console.log(
@@ -203,4 +189,37 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
   return performanceWrapper;
 }
 
+const withPerformanceCheckUnnecessaryRender = (fn) => {
+  const performanceWrapper = (params) => {
+    if (!window.performance_profiler.isTracking) return fn(params);
 
+    const prevElement = params.instance.element;
+    const nextElement = params.element;
+    const id = prevElement.__id;
+
+    const elementName = prevElement.type.name;
+
+    const counter = window.performance_profiler.redundantUpdatesCounters.get(
+      elementName,
+    );
+    
+    if (counter) {
+      window.performance_profiler.redundantUpdatesCounters.set(
+        elementName,
+        counter + 1,
+      );
+    } else {
+      window.performance_profiler.redundantUpdatesCounters.set(elementName, 1);
+    }
+
+    console.log(
+      `${elementName} wasted render: ${window.performance_profiler.redundantUpdatesCounters.get(
+        elementName,
+      )}`,
+    );
+
+    return fn(params);
+  };
+
+  return performanceWrapper;
+}

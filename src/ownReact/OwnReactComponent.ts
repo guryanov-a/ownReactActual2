@@ -17,9 +17,9 @@ export abstract class OwnReactComponent<
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;
   componentDidUpdate?: () => void;
-  __internalInstance: InternalInstance;
-  abstract render(): JSX.Element | null;
   forceUpdate: () => void;
+  abstract render(): JSX.Element | null;
+  __internalInstance: InternalInstance;
   context: unknown;
   refs: Record<string, ReactInstance>;
 
@@ -50,7 +50,7 @@ export abstract class OwnReactComponent<
     updateComponent({ instance: this.__internalInstance });
   }
 
-  shouldComponentUpdate() {
+  shouldComponentUpdate(prevProps: P, prevState: S): boolean {
     return true;
   }
 }
