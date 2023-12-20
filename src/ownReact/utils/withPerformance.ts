@@ -102,6 +102,8 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       name: `${name}/${elementName}`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
+      unnecessaryRenders: domUpdateMeasurement - 1,
+      potentialSavingTime: 0,
       checksForUpdate: {
         name: `${name}/${elementName}`,
         duration: checksPerformanceDuration,
@@ -195,8 +197,6 @@ const withPerformanceCheckUnnecessaryRender = (fn) => {
 
     const prevElement = params.instance.element;
     const nextElement = params.element;
-    const id = prevElement.__id;
-
     const elementName = prevElement.type.name;
 
     const counter = window.performance_profiler.redundantUpdatesCounters.get(

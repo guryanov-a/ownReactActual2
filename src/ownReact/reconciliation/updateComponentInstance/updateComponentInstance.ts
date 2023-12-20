@@ -22,7 +22,7 @@ const updateComponentInstance: UpdateComponentInstance = (dataForUpdate) => {
 
 const updateComponentInstanceHofed = withPerformanceUpdate(
   updateComponentInstance,
-  'Update component'
+  'Component instance update'
 );
 
 export { updateComponentInstanceHofed as updateComponentInstance };
