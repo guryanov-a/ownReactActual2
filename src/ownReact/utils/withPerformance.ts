@@ -15,12 +15,14 @@ class Profiler {
   isTracking: boolean;
   isRealTimeInfoEnabled: boolean;
   redundantUpdatesCounters: Map<ComponentNameWithId, NumberOfRedundantUpdates>;
+  unnecessaryRendersMap: Map<ComponentNameWithId, { name: string, duration: number }>;
 
   constructor() {
     this.entries = [];
     this.isTracking = true;
     this.isRealTimeInfoEnabled = true;
     this.redundantUpdatesCounters = new Map();
+    this.unnecessaryRendersMap = new Map();
   }
 
   clear() {
@@ -97,35 +99,39 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       domUpdateMeasurement.duration;
 
     const profiler = window.performance_profiler;
+    let isUnnecessaryRender = false;
 
-    const prevElementProps = params.instance.element.props;
-    const nextElementProps = params.element.props;
-    const prevElementPropsMap = new Map(Object.entries(prevElementProps));
-    const nextElementsPropsSet = new Set(Object.keys(nextElementProps));
+    if (params?.instance?.element?.props && params?.element?.props) {
+      const prevElementProps = params.instance.element.props;
+      const nextElementProps = params.element.props;
+      const prevElementPropsMap = new Map(Object.entries(prevElementProps));
+      const nextElementsPropsSet = new Set(Object.keys(nextElementProps));
 
-    const areNextPropsTheSame = Object.entries(nextElementProps).every(
-      ([key, value]) => prevElementPropsMap.get(key) === value,
-    );
-    const areThereAllOldProps = Object.entries(prevElementProps).every(
-      ([key]) => nextElementsPropsSet.has(key),
-    );
-
-    const isUnnecessaryRender = areNextPropsTheSame && areThereAllOldProps;
-    if (isUnnecessaryRender) {
-      profiler.unnecessaryRendersMap.set(
-        id,
-        {
-          name: `${name}/${elementName}`,
-          duration: domUpdateMeasurement.duration,
-        }
+      const areNextPropsTheSame = Object.entries(nextElementProps).every(
+        ([key, value]) => prevElementPropsMap.get(key) === value,
       );
+      const areThereAllOldProps = Object.entries(prevElementProps).every(
+        ([key]) => nextElementsPropsSet.has(key),
+      );
+
+      isUnnecessaryRender = areNextPropsTheSame && areThereAllOldProps;
+
+      if (isUnnecessaryRender) {
+        profiler.unnecessaryRendersMap.set(
+          id,
+          {
+            name: `${name}/${elementName}`,
+            duration: domUpdateMeasurement.duration,
+          }
+        );
+      }
     }
 
     const profilerEntry = {
       name: `${name}/${elementName}`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
-      unnecessaryRenders: domUpdateMeasurement - 1,
+      isUnnecessaryRender,
       potentialSavingTime: 0,
       checksForUpdate: {
         name: `${name}/${elementName}`,
@@ -214,33 +220,28 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
   return performanceWrapper;
 }
 
-const withPerformanceCheckUnnecessaryRender = (fn) => {
+export const withPerformanceCheckUnnecessaryRender = (fn) => {
   const performanceWrapper = (params) => {
+    const result = fn(params);
+
     if (!window.performance_profiler.isTracking) return fn(params);
 
-    const prevElementProps = params.instance.element.props;
-    const nextElementProps = params.element.props;
-    const prevElementPropsMap = new Map(Object.entries(prevElementProps));
-    const nextElementsPropsSet = new Set(Object.keys(nextElementProps));
+    const element = params?.instance?.element ?? params?.element;
+    const id = element.__id;
 
-    const areNextPropsTheSame = Object.entries(nextElementProps).every(
-      ([key, value]) => prevElementPropsMap.get(key) === value,
-    );
-    const areThereAllOldProps = Object.entries(prevElementProps).every(
-      ([key]) => nextElementsPropsSet.has(key),
-    );
-
-    const isUnnecessaryUpdate = areNextPropsTheSame && areThereAllOldProps;
+    const isUnnecessaryUpdate = window.performance_profiler.unnecessaryRendersMap.has(id)
+    
     if (isUnnecessaryUpdate) {
-      const elementName = getElementName(params.element);
-      const elementId = params.element.__id;
+      const { name, duration } = window.performance_profiler.unnecessaryRendersMap.get(id);
 
       console.warn(
-        `${elementName} wasted render: ${window.performance_profiler.redundantUpdatesCounters.get(
-          elementId,
-        )}`,
+        `${name} wasted render: ${duration}ms`,
       );
+
+      window.performance_profiler.unnecessaryRendersMap.delete(id);
     }
+
+    return result;
   };
 
   return performanceWrapper;
