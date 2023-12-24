@@ -145,15 +145,17 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     profiler.entries.push(profilerEntry);
 
     if (profiler.isRealTimeInfoEnabled && profiler.isTracking) {
+      console.group(name);
       console.log(
-        `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
+        `${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
       );
       console.log(
-        `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
+        `${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
       );
       console.log(
-        `${name}/${elementName} checks: ${checksPerformanceDuration}ms`,
+        `${elementName} checks: ${checksPerformanceDuration}ms`,
       );
+      console.groupEnd();
     }
 
     return result;
@@ -224,7 +226,7 @@ export const withPerformanceCheckUnnecessaryRender = (fn) => {
   const performanceWrapper = (params) => {
     const result = fn(params);
 
-    if (!window.performance_profiler.isTracking) return fn(params);
+    if (!window.performance_profiler.isTracking) return result;
 
     const element = params?.instance?.element ?? params?.element;
     const id = element.__id;
