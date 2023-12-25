@@ -71,6 +71,18 @@ const getElementName: GetElementName = (element) => {
   return element.type;
 };
 
+const isShallowEqual = (obj1, obj2) => {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  const hasDifferentValue = keys1.some((key) => obj1[key] !== obj2[key]);
+  const hasDifferentKey = keys1.some((key) => !Object.hasOwnProperty.call(obj2, key));
+
+  return hasDifferentValue && hasDifferentKey;
+}
+
 export function withPerformanceUpdate(fn, name = fn.name) {
   return function (params) {
     if (!window.performance_profiler.isTracking) return fn(params);
@@ -100,21 +112,14 @@ export function withPerformanceUpdate(fn, name = fn.name) {
 
     const profiler = window.performance_profiler;
     let isUnnecessaryRender = false;
+    const prevElementProps = params?.instance?.element?.props;
+    const nextElementProps = params?.element?.props;
 
-    if (params?.instance?.element?.props && params?.element?.props) {
-      const prevElementProps = params.instance.element.props;
-      const nextElementProps = params.element.props;
-      const prevElementPropsMap = new Map(Object.entries(prevElementProps));
-      const nextElementsPropsSet = new Set(Object.keys(nextElementProps));
+    if (prevElementProps && nextElementProps) {
+      const arePropsTheSame = isShallowEqual(prevElementProps, nextElementProps);
+      const areStateTheSame = isShallowEqual(params.instance.publicInstance.state, params.instance.publicInstance.prevState);
 
-      const areNextPropsTheSame = Object.entries(nextElementProps).every(
-        ([key, value]) => prevElementPropsMap.get(key) === value,
-      );
-      const areThereAllOldProps = Object.entries(prevElementProps).every(
-        ([key]) => nextElementsPropsSet.has(key),
-      );
-
-      isUnnecessaryRender = areNextPropsTheSame && areThereAllOldProps;
+      isUnnecessaryRender = arePropsTheSame && areStateTheSame;
 
       if (isUnnecessaryRender) {
         profiler.unnecessaryRendersMap.set(
