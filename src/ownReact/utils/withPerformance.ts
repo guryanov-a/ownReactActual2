@@ -80,7 +80,7 @@ const isShallowEqual = (obj1, obj2) => {
   const hasDifferentValue = keys1.some((key) => obj1[key] !== obj2[key]);
   const hasDifferentKey = keys1.some((key) => !Object.hasOwnProperty.call(obj2, key));
 
-  return hasDifferentValue && hasDifferentKey;
+  return !hasDifferentValue && !hasDifferentKey;
 }
 
 export function withPerformanceUpdate(fn, name = fn.name) {
@@ -91,14 +91,14 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     const id = element.__id;
     const elementName = getElementName(element);
 
-    performance.mark(`${name}/${elementName} start reconciliation (${id})`);
+    performance.mark(`${elementName} start reconciliation (${id})`);
     const result = fn(params);
-    performance.mark(`${name}/${elementName} end reconciliation (${id})`);
+    performance.mark(`${elementName} end reconciliation (${id})`);
 
     const reconciliationPerformanceMeasurement = performance.measure(
-      `${name}/${elementName} reconciliation`,
-      `${name}/${elementName} start reconciliation (${id})`,
-      `${name}/${elementName} end reconciliation (${id})`,
+      `${elementName} reconciliation`,
+      `${elementName} start reconciliation (${id})`,
+      `${elementName} end reconciliation (${id})`,
     );
     const domUpdateMeasurement = performance.measure(
       `${elementName} DOM update`,
@@ -112,8 +112,11 @@ export function withPerformanceUpdate(fn, name = fn.name) {
 
     const profiler = window.performance_profiler;
     let isUnnecessaryRender = false;
-    const prevElementProps = params?.instance?.element?.props;
-    const nextElementProps = params?.element?.props;
+    const prevElement = params?.instance?.element;
+    const nextElement = params?.element;
+
+    const prevElementProps = prevElement?.props;
+    const nextElementProps = nextElement?.props;
 
     if (prevElementProps && nextElementProps) {
       const arePropsTheSame = isShallowEqual(prevElementProps, nextElementProps);
@@ -230,6 +233,9 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 export const withPerformanceCheckUnnecessaryRender = (fn) => {
   const performanceWrapper = (params) => {
     const result = fn(params);
+    if (params?.instance?.element?.type?.name === "TestShallowCheck") {
+      debugger;
+    }
 
     if (!window.performance_profiler.isTracking) return result;
 
@@ -237,7 +243,7 @@ export const withPerformanceCheckUnnecessaryRender = (fn) => {
     const id = element.__id;
 
     const isUnnecessaryUpdate = window.performance_profiler.unnecessaryRendersMap.has(id)
-    
+
     if (isUnnecessaryUpdate) {
       const { name, duration } = window.performance_profiler.unnecessaryRendersMap.get(id);
 

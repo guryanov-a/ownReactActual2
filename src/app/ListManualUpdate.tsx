@@ -46,7 +46,6 @@ const updateAlphabetState = state => {
 
   return {
     alphabet: newAlphabet,
-    objectProp: { a: 1 },
   };
 };
 
@@ -107,7 +106,7 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
           >
             Update
           </button>
-          <TestShallowCheck car={this.state.car} />
+          <TestShallowCheck car="car" />
         </div>
       </div>
     );
@@ -119,7 +118,7 @@ class TestShallowCheck extends OwnReactComponent {
   render() {
     return (
       <div>
-        {String(this.props.car)}
+        {this.props.car}
       </div>
     );
   }
