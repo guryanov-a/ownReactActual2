@@ -9,17 +9,20 @@ interface ProfilerEntry {
   checksForUpdate: PerformanceEntry;
 }
 
+type NumberOfRedundantUpdates = number;
 class Profiler {
   entries: ProfilerEntry[];
   isTracking: boolean;
   isRealTimeInfoEnabled: boolean;
-  unnecessaryUpdates: number;
+  redundantUpdatesCounters: Map<ComponentNameWithId, NumberOfRedundantUpdates>;
+  unnecessaryRendersMap: Map<ComponentNameWithId, { name: string, duration: number }>;
 
   constructor() {
     this.entries = [];
     this.isTracking = true;
     this.isRealTimeInfoEnabled = true;
-    this.unnecessaryUpdates = 0;
+    this.redundantUpdatesCounters = new Map();
+    this.unnecessaryRendersMap = new Map();
   }
 
   clear() {
@@ -68,6 +71,18 @@ const getElementName: GetElementName = (element) => {
   return element.type;
 };
 
+const isShallowEqual = (obj1, obj2) => {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  const hasDifferentValue = keys1.some((key) => obj1[key] !== obj2[key]);
+  const hasDifferentKey = keys1.some((key) => !Object.hasOwnProperty.call(obj2, key));
+
+  return !hasDifferentValue && !hasDifferentKey;
+}
+
 export function withPerformanceUpdate(fn, name = fn.name) {
   return function (params) {
     if (!window.performance_profiler.isTracking) return fn(params);
@@ -75,17 +90,18 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     const element = params?.instance?.element ?? params?.element;
     const id = element.__id;
     const elementName = getElementName(element);
-    performance.mark(`${name}/${elementName} start reconciliation (${id})`);
+
+    performance.mark(`${elementName} start reconciliation (${id})`);
     const result = fn(params);
-    performance.mark(`${name}/${elementName} end reconciliation (${id})`);
+    performance.mark(`${elementName} end reconciliation (${id})`);
 
     const reconciliationPerformanceMeasurement = performance.measure(
-      `${name}/${elementName} reconciliation (${id})`,
-      `${name}/${elementName} start reconciliation (${id})`,
-      `${name}/${elementName} end reconciliation (${id})`,
+      `${elementName} reconciliation`,
+      `${elementName} start reconciliation (${id})`,
+      `${elementName} end reconciliation (${id})`,
     );
     const domUpdateMeasurement = performance.measure(
-      `${elementName} DOM update (${id})`,
+      `${elementName} DOM update`,
       `${elementName} start DOM update (${id})`,
       `${elementName} end DOM update (${id})`,
     );
@@ -95,30 +111,65 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       domUpdateMeasurement.duration;
 
     const profiler = window.performance_profiler;
+    let isUnnecessaryRender = false;
+    const prevElement = params?.instance?.element;
+    const nextElement = params?.element;
 
-    profiler.entries.push({
-      name: `${name}/${elementName} (${id})`,
+    const prevElementProps = prevElement?.props;
+    const nextElementProps = nextElement?.props;
+
+    if (prevElementProps && nextElementProps) {
+      const prevState = params.instance.publicInstance.prevState;
+      const nextState = params.instance.publicInstance.state;
+
+      const arePropsTheSame = isShallowEqual(prevElementProps, nextElementProps);
+      const areStateTheSame = isShallowEqual(prevState, nextState);
+      isUnnecessaryRender = arePropsTheSame && areStateTheSame;
+
+      if (isUnnecessaryRender && name === 'Component instance update') {
+        console.warn(
+          `${elementName} wasted render: ${domUpdateMeasurement.duration}ms`
+        );
+        
+        profiler.unnecessaryRendersMap.set(
+          id,
+          {
+            name: `${name}/${elementName}`,
+            duration: domUpdateMeasurement.duration,
+          }
+        );
+      }
+    }
+
+    const profilerEntry = {
+      name: `${name}/${elementName}`,
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
+      isUnnecessaryRender,
+      potentialSavingTime: isUnnecessaryRender ? domUpdateMeasurement.duration : 0,
       checksForUpdate: {
-        name: `${name}/${elementName} (${id})`,
+        name: `${name}/${elementName}`,
         duration: checksPerformanceDuration,
         entryType: "measure",
         startTime: reconciliationPerformanceMeasurement.startTime,
         toJSON: () => this.toJSON(),
       },
-    });
+    };
+
+    profiler.entries.push(profilerEntry);
 
     if (profiler.isRealTimeInfoEnabled && profiler.isTracking) {
+      console.group(name);
       console.log(
-        `${name}/${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
+        `${elementName} reconciliation: ${reconciliationPerformanceMeasurement.duration}ms`,
       );
       console.log(
-        `${name}/${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
+        `${elementName} DOM update took: ${domUpdateMeasurement.duration}ms`,
       );
       console.log(
-        `${name}/${elementName} checks: ${checksPerformanceDuration}ms`,
+        `${elementName} checks: ${checksPerformanceDuration}ms`,
       );
+      console.groupEnd();
     }
 
     return result;
@@ -185,4 +236,29 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
   return performanceWrapper;
 }
 
+export const withPerformanceCheckUnnecessaryRender = (fn) => {
+  const performanceWrapper = (params) => {
+    const result = fn(params);
 
+    if (!window.performance_profiler.isTracking) return result;
+
+    const element = params?.instance?.element ?? params?.element;
+    const id = element.__id;
+
+    const isUnnecessaryUpdate = window.performance_profiler.unnecessaryRendersMap.has(id)
+
+    if (isUnnecessaryUpdate) {
+      const { name, duration } = window.performance_profiler.unnecessaryRendersMap.get(id);
+
+      console.warn(
+        `${name} wasted render: ${duration}ms`,
+      );
+
+      window.performance_profiler.unnecessaryRendersMap.delete(id);
+    }
+
+    return result;
+  };
+
+  return performanceWrapper;
+}

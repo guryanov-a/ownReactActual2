@@ -45,7 +45,7 @@ const updateAlphabetState = state => {
   }
 
   return {
-    alphabet: newAlphabet
+    alphabet: newAlphabet,
   };
 };
 
@@ -53,7 +53,6 @@ interface Props {}
 interface State {
   alphabet: string[] | JSX.Element;
   unchangingLetters: Set<string>;
-  lettersToFilter: string;
 }
 /**
  * List with random letters that updated manually on button click
@@ -63,7 +62,7 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
   state = {
     alphabet,
     unchangingLetters: new Set<string>(),
-    lettersToFilter: ""
+    car: { a: 1 },
   };
 
   // randomly changes position of random number of letters in the alphabet
@@ -73,14 +72,12 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
 
   // changes unchangeble characters and their order
   handleFilterChange = (event) => {
-    const newLettersToFilter = event.target.value;
     const newUnchangingLetters = new Set(
       event.target.value.toUpperCase().split("")
     );
 
     this.setState({
       unchangingLetters: newUnchangingLetters,
-      lettersToFilter: newLettersToFilter
     });
   }
 
@@ -106,11 +103,22 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
         <div>
           <button
             onClick={this.handleUpdateClick}
-            value={this.state.lettersToFilter}
           >
             Update
           </button>
+          <TestShallowCheck car="car" />
         </div>
+      </div>
+    );
+  }
+}
+
+
+class TestShallowCheck extends OwnReactComponent {
+  render() {
+    return (
+      <div>
+        {this.props.car}
       </div>
     );
   }

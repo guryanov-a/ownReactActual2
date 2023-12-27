@@ -17,19 +17,24 @@ export abstract class OwnReactComponent<
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;
   componentDidUpdate?: () => void;
-  __internalInstance: InternalInstance;
-  abstract render(): JSX.Element | null;
   forceUpdate: () => void;
+  abstract render(): JSX.Element | null;
+  __internalInstance: InternalInstance;
   context: unknown;
   refs: Record<string, ReactInstance>;
+  prevProps: P;
+  prevState: S;
 
   constructor(props?: P) {
     this.props = props || ({} as P);
+    this.prevProps = { ...this.props };
     this.state = {} as S;
+    this.prevState = { ...this.state };
     this.__internalInstance = null;
   }
 
   setState(stateChangeInfo: Partial<ComponentState> | ChangeState) {
+    this.prevState = this.state;
     // check what type of stateChangeInfo is
     if (typeof stateChangeInfo === "function") {
       // if it's a function, call it with the current state
@@ -50,7 +55,7 @@ export abstract class OwnReactComponent<
     updateComponent({ instance: this.__internalInstance });
   }
 
-  shouldComponentUpdate() {
+  shouldComponentUpdate(): boolean {
     return true;
   }
 }
