@@ -119,12 +119,18 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     const nextElementProps = nextElement?.props;
 
     if (prevElementProps && nextElementProps) {
-      const arePropsTheSame = isShallowEqual(prevElementProps, nextElementProps);
-      const areStateTheSame = isShallowEqual(params.instance.publicInstance.state, params.instance.publicInstance.prevState);
+      const prevState = params.instance.publicInstance.prevState;
+      const nextState = params.instance.publicInstance.state;
 
+      const arePropsTheSame = isShallowEqual(prevElementProps, nextElementProps);
+      const areStateTheSame = isShallowEqual(prevState, nextState);
       isUnnecessaryRender = arePropsTheSame && areStateTheSame;
 
-      if (isUnnecessaryRender) {
+      if (isUnnecessaryRender && name === 'Component instance update') {
+        console.warn(
+          `${elementName} wasted render: ${domUpdateMeasurement.duration}ms`
+        );
+        
         profiler.unnecessaryRendersMap.set(
           id,
           {
@@ -140,7 +146,7 @@ export function withPerformanceUpdate(fn, name = fn.name) {
       reconciliation: reconciliationPerformanceMeasurement,
       domUpdate: domUpdateMeasurement,
       isUnnecessaryRender,
-      potentialSavingTime: 0,
+      potentialSavingTime: isUnnecessaryRender ? domUpdateMeasurement.duration : 0,
       checksForUpdate: {
         name: `${name}/${elementName}`,
         duration: checksPerformanceDuration,
@@ -233,9 +239,6 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 export const withPerformanceCheckUnnecessaryRender = (fn) => {
   const performanceWrapper = (params) => {
     const result = fn(params);
-    if (params?.instance?.element?.type?.name === "TestShallowCheck") {
-      debugger;
-    }
 
     if (!window.performance_profiler.isTracking) return result;
 
