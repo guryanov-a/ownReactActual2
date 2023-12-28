@@ -83,6 +83,18 @@ const isShallowEqual = (obj1, obj2) => {
   return !hasDifferentValue && !hasDifferentKey;
 }
 
+const getChainName = (element: Element): string => {
+  let resultName = getElementName(element);
+
+  while(element.parentElement) {
+    const parentElementName = getElementName(element.parentElement);
+
+    resultName = parentElementName + " > " + resultName;
+  }
+
+  return resultName;
+}
+
 export function withPerformanceUpdate(fn, name = fn.name) {
   return function (params) {
     if (!window.performance_profiler.isTracking) return fn(params);
@@ -130,6 +142,8 @@ export function withPerformanceUpdate(fn, name = fn.name) {
         console.warn(
           `${elementName} wasted render: ${domUpdateMeasurement.duration}ms`
         );
+
+        const chainName = getChainName(element);
         
         profiler.unnecessaryRendersMap.set(
           id,
@@ -236,29 +250,20 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
   return performanceWrapper;
 }
 
-export const withPerformanceCheckUnnecessaryRender = (fn) => {
-  const performanceWrapper = (params) => {
+export const withCountingUnnecessaryRenders = (fn) => {
+  const wrapper = (params) => {
     const result = fn(params);
 
     if (!window.performance_profiler.isTracking) return result;
 
-    const element = params?.instance?.element ?? params?.element;
-    const id = element.__id;
 
-    const isUnnecessaryUpdate = window.performance_profiler.unnecessaryRendersMap.has(id)
 
-    if (isUnnecessaryUpdate) {
-      const { name, duration } = window.performance_profiler.unnecessaryRendersMap.get(id);
-
-      console.warn(
-        `${name} wasted render: ${duration}ms`,
-      );
-
-      window.performance_profiler.unnecessaryRendersMap.delete(id);
-    }
+    console.group('Unnecessary renders info');
+    console.log('');
+    console.groupEnd();
 
     return result;
   };
 
-  return performanceWrapper;
+  return wrapper;
 }
