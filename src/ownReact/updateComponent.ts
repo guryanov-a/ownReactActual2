@@ -1,6 +1,6 @@
 import { reconcile } from "./reconciliation/reconcile";
 import { ComponentInstance } from "./types/types";
-import { withPerformanceUpdate } from "./utils/withPerformance";
+import { withPerformanceUpdate, withCountingUnnecessaryRenders } from "./utils/withPerformance";
 
 interface Params {
   instance: ComponentInstance;
@@ -12,9 +12,11 @@ const updateComponent: UpdateComponent = ({ instance: internalInstance }) => {
   return reconcile({ container: parentDom, instance: internalInstance, element });
 };
 
-const updateComponentHofed = withPerformanceUpdate(
-  updateComponent,
-  `Component update`
+const updateComponentHofed = withCountingUnnecessaryRenders(
+  withPerformanceUpdate(
+    updateComponent,
+    `Component update`
+  )
 );
 
 export { updateComponentHofed as updateComponent };

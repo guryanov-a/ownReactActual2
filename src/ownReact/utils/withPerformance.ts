@@ -9,19 +9,20 @@ interface ProfilerEntry {
   checksForUpdate: PerformanceEntry;
 }
 
-type NumberOfRedundantUpdates = number;
+type UnnecessaryRenderTreeInfo = { count: number, duration: number };
+type ElementInTreeName = string;
 class Profiler {
   entries: ProfilerEntry[];
   isTracking: boolean;
   isRealTimeInfoEnabled: boolean;
-  redundantUpdatesCounters: Map<ComponentNameWithId, NumberOfRedundantUpdates>;
+  unnecessaryRendersTreeInfo: Map<ElementInTreeName, UnnecessaryRenderTreeInfo>;
   unnecessaryRendersMap: Map<ComponentNameWithId, { name: string, duration: number }>;
 
   constructor() {
     this.entries = [];
     this.isTracking = true;
     this.isRealTimeInfoEnabled = true;
-    this.redundantUpdatesCounters = new Map();
+    this.unnecessaryRendersTreeInfo = new Map();
     this.unnecessaryRendersMap = new Map();
   }
 
@@ -85,11 +86,13 @@ const isShallowEqual = (obj1, obj2) => {
 
 const getChainName = (element: Element): string => {
   let resultName = getElementName(element);
+  let currElement = element;
 
-  while(element.parentElement) {
+  while(currElement.parentElement) {
     const parentElementName = getElementName(element.parentElement);
 
     resultName = parentElementName + " > " + resultName;
+    currElement = currElement.parentElement;
   }
 
   return resultName;
@@ -144,6 +147,21 @@ export function withPerformanceUpdate(fn, name = fn.name) {
         );
 
         const chainName = getChainName(element);
+
+        if (profiler.unnecessaryRendersTreeInfo.has(chainName)) {
+          profiler.unnecessaryRendersTreeInfo.set(
+            chainName,
+            {
+              count: profiler.unnecessaryRendersTreeInfo.get(chainName).count + 1,
+              duration: profiler.unnecessaryRendersTreeInfo.get(chainName).duration + domUpdateMeasurement.duration,
+            }
+          );
+        } else {
+          profiler.unnecessaryRendersTreeInfo.set(chainName, {
+            count: 1,
+            duration: domUpdateMeasurement.duration,
+          });
+        }
         
         profiler.unnecessaryRendersMap.set(
           id,
@@ -256,11 +274,13 @@ export const withCountingUnnecessaryRenders = (fn) => {
 
     if (!window.performance_profiler.isTracking) return result;
 
-
-
     console.group('Unnecessary renders info');
-    console.log('');
+    for (const [key, value] of window.performance_profiler.unnecessaryRendersTreeInfo.entries()) {
+      console.warn(`${key}: ${value.count} unnecessary updates, ${value.duration}ms of potential saving`);
+    }
     console.groupEnd();
+
+    window.performance_profiler.unnecessaryRendersTreeInfo.clear();
 
     return result;
   };
