@@ -44,7 +44,10 @@ const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({
   const children = props.children ? props.children : [];
   const childrenArr = Array.isArray(children) ? children : [children];
   const childInstances = childrenArr
-    .map((element) => instantiate({ element }))
+    .map((childElement) => {
+      childElement.parentElement = element;
+      return instantiate({ element: childElement });
+    })
     .filter((childInstance): childInstance is Instance => childInstance !== null);
   const childDoms = childInstances.map(childInstance => childInstance.dom);
   childDoms.forEach(childDom => dom.appendChild(childDom));

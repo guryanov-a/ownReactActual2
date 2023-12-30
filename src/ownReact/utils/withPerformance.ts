@@ -87,12 +87,13 @@ const isShallowEqual = (obj1, obj2) => {
 const getChainName = (element: Element): string => {
   let resultName = getElementName(element);
   let currElement = element;
+  let parentElement = element.parentElement;
 
-  while(currElement.parentElement) {
-    const parentElementName = getElementName(element.parentElement);
-
+  while(parentElement) {
+    const parentElementName = getElementName(parentElement);
     resultName = parentElementName + " > " + resultName;
-    currElement = currElement.parentElement;
+    currElement = parentElement;
+    parentElement = currElement.parentElement;
   }
 
   return resultName;
@@ -143,7 +144,7 @@ export function withPerformanceUpdate(fn, name = fn.name) {
 
       if (isUnnecessaryRender && name === 'Component instance update') {
         console.warn(
-          `${elementName} wasted render: ${domUpdateMeasurement.duration}ms`
+          `${elementName} unnecessary render: ${domUpdateMeasurement.duration}ms`
         );
 
         const chainName = getChainName(element);
@@ -270,17 +271,35 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 
 export const withCountingUnnecessaryRenders = (fn) => {
   const wrapper = (params) => {
+    performance.mark(`total update time start`);
+    const totalRendersBeforeUpdate = window.performance_profiler.entries.length;
     const result = fn(params);
+    performance.mark(`total update time end`);
+
+    const totalUpdateTime = performance.measure(
+      `total update time`,
+      `total update time start`,
+      `total update time end`,
+    );
 
     if (!window.performance_profiler.isTracking) return result;
 
-    console.group('Unnecessary renders info');
-    for (const [key, value] of window.performance_profiler.unnecessaryRendersTreeInfo.entries()) {
-      console.warn(`${key}: ${value.count} unnecessary updates, ${value.duration}ms of potential saving`);
-    }
-    console.groupEnd();
+    if (window.performance_profiler.unnecessaryRendersMap.size > 0) {
+      let totalPotentialSavingTime = 0;
 
-    window.performance_profiler.unnecessaryRendersTreeInfo.clear();
+      console.group('Unnecessary renders info');
+      for (const [key, value] of window.performance_profiler.unnecessaryRendersTreeInfo.entries()) {
+        console.warn(`${key}: ${value.count} unnecessary updates, ${value.duration}ms of potential saving`);
+        totalPotentialSavingTime += value.duration;
+      }
+      window.performance_profiler.unnecessaryRendersTreeInfo.clear();
+      const totalUnnecessaryRenders = window.performance_profiler.unnecessaryRendersMap.size;
+      window.performance_profiler.unnecessaryRendersMap.clear();
+      const totalPotentialSavingTimeInMs = totalPotentialSavingTime.toFixed(2);
+      const totalRenders = window.performance_profiler.entries.length;
+      console.warn(`Unnecessary renders: ${totalUnnecessaryRenders} (total renders: ${totalRenders-totalRendersBeforeUpdate}), Potential saving time: ${totalPotentialSavingTimeInMs}ms (total time: ${totalUpdateTime.duration.toFixed(2)}ms)`);
+      console.groupEnd();
+    }
 
     return result;
   };

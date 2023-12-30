@@ -106,19 +106,7 @@ export class ListManualUpdate extends OwnReactComponent<Props, State> {
           >
             Update
           </button>
-          <TestShallowCheck car="car" />
         </div>
-      </div>
-    );
-  }
-}
-
-
-class TestShallowCheck extends OwnReactComponent {
-  render() {
-    return (
-      <div>
-        {this.props.car}
       </div>
     );
   }
