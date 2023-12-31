@@ -84,6 +84,16 @@ const isShallowEqual = (obj1, obj2) => {
   return !hasDifferentValue && !hasDifferentKey;
 }
 
+const getComponentParentElement = (element: Element): Element => {
+  let parentElement = element.parentElement;
+
+  while(!isComponentElement(parentElement)) {
+      parentElement = parentElement.parentElement;
+  }
+
+  return parentElement;
+}
+
 const getChainName = (element: Element): string => {
   let resultName = getElementName(element);
   let currElement = element;

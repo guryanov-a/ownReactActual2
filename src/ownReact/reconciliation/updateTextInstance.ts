@@ -12,9 +12,7 @@ interface Params {
 }
 type UpdateTextInstance = (params: Params) => TextInstance;
 export const updateTextInstance: UpdateTextInstance = ({instance, element}) => {
-  const isTheSameTextElement =
-    instance.element.type === "TEXT_ELEMENT" &&
-    instance.element.props.nodeValue === element.props.nodeValue;
+  const isTheSameTextElement = instance.element.props.nodeValue === element.props.nodeValue;
 
   if (!isTheSameTextElement) {
     updateDomText({ instance, element });

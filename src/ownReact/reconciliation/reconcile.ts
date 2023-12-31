@@ -70,6 +70,8 @@ export const reconcile: Reconcile = ({ container, instance, element }) => {
     return replaceInstance({ container, element });
   }
 
+  element.parentElement = instance.element.parentElement;
+
   if (isTextElement(element) && isTextInstance(instance)) {
     return updateTextInstance({ instance, element });
   }

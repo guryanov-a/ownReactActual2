@@ -4,7 +4,7 @@ interface Params {
     instance: ComponentInstance;
     element: ComponentElement;
     newChildInstance: Instance;
-};
+}
 
 type ApplyNewComponentInstanceData = (params: Params) => ComponentInstance;
 export const applyNewComponentInstanceData: ApplyNewComponentInstanceData = ({ instance, element, newChildInstance }) => {
