@@ -122,12 +122,12 @@ export function withPerformanceUpdate(fn, name = fn.name) {
     performance.mark(`${elementName} end reconciliation (${id})`);
 
     const reconciliationPerformanceMeasurement = performance.measure(
-      `${elementName} reconciliation`,
+      `${elementName} reconciliation (${id})`,
       `${elementName} start reconciliation (${id})`,
       `${elementName} end reconciliation (${id})`,
     );
     const domUpdateMeasurement = performance.measure(
-      `${elementName} DOM update`,
+      `${elementName} DOM update (${id})`,
       `${elementName} start DOM update (${id})`,
       `${elementName} end DOM update (${id})`,
     );
