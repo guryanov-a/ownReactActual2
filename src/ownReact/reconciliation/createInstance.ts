@@ -1,5 +1,4 @@
 import { instantiate } from "./instantiate";
-import { withPerformanceDomChange } from "../utils/withPerformance";
 import { Element, Instance } from "../types/types";
 import { isComponentInstance } from "../types/is";
 

@@ -1,4 +1,4 @@
-import { isComponentElement, isTextElement } from "../types/is";
+import { isComponentElement as checkIfComponentElement, isDomElement as checkIfDomElement, isTextElement } from "../types/is";
 import { Element, Instance } from "../types/types";
 
 type ComponentNameWithId = string;
@@ -65,7 +65,7 @@ const getElementName: GetElementName = (element) => {
     return `TEXT_ELEMENT ${element.props.nodeValue}`;
   }
 
-  if (isComponentElement(element)) {
+  if (checkIfComponentElement(element)) {
     return element.type.name;
   }
 
@@ -87,7 +87,7 @@ const isShallowEqual = (obj1, obj2) => {
 const getComponentParentElement = (element: Element): Element => {
   let parentElement = element.parentElement;
 
-  while(!isComponentElement(parentElement)) {
+  while(!checkIfComponentElement(parentElement)) {
       parentElement = parentElement.parentElement;
   }
 
@@ -220,23 +220,27 @@ export function withPerformanceUpdate(fn, name = fn.name) {
 }
 
 const startDomUpdate = (element: Element) => {
-  const name = getElementName(element);
-  const id = element.__id;
+  const parentElement = element.parentElement;
+  const isParentDomElement = parentElement && checkIfDomElement(parentElement);
 
-  if (element.parentElement) {
-    startDomUpdate(element.parentElement);
+  if (parentElement && !isParentDomElement) {
+    startDomUpdate(parentElement);
   }
 
-  performance.mark(`${name} start DOM update (${id})`);
+  const elementName = getElementName(element);
+  const id = element.__id;
+  performance.mark(`${elementName} start DOM update (${id})`);
 }
 
 const endDomUpdate = (element: Element) => {
   const name = getElementName(element);
   const id = element.__id;
   performance.mark(`${name} end DOM update (${id})`);
+  const parentElement = element.parentElement;
+  const isParentDomElement = parentElement && checkIfDomElement(parentElement);
 
-  if (element.parentElement) {
-    endDomUpdate(element.parentElement);
+  if (parentElement && !isParentDomElement) {
+    endDomUpdate(parentElement);
   }
 }
 
@@ -261,7 +265,7 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 
     const elementName = getElementName(element);
 
-    if (element.parentElement) {
+    if (element.parentElement && checkIfComponentElement(element.parentElement)) {
       startDomUpdate(element.parentElement);
     }
 
@@ -269,7 +273,7 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
     const result = fn(params);
     performance.mark(`${elementName} end DOM update (${id})`);
 
-    if (element.parentElement) {
+    if (element.parentElement && checkIfComponentElement(element.parentElement)) {
       endDomUpdate(element.parentElement);
     }
 
@@ -281,15 +285,18 @@ export const withPerformanceDomChange: WithPerformanceDomChange = (fn) => {
 
 export const withCountingUnnecessaryRenders = (fn) => {
   const wrapper = (params) => {
-    performance.mark(`total update time start`);
+    const element = params?.instance?.element ?? params?.element;
+    const id = element.__id;
     const totalRendersBeforeUpdate = window.performance_profiler.entries.length;
+
+    performance.mark(`total update time start (${id})`);
     const result = fn(params);
-    performance.mark(`total update time end`);
+    performance.mark(`total update time end (${id})`);
 
     const totalUpdateTime = performance.measure(
-      `total update time`,
-      `total update time start`,
-      `total update time end`,
+      `total update time (${id})`,
+      `total update time start (${id})`,
+      `total update time end (${id})`,
     );
 
     if (!window.performance_profiler.isTracking) return result;
