@@ -1,6 +1,6 @@
 import { identity } from "ramda";
 import { OwnReactComponent } from "../../OwnReactComponent";
-import { ComponentElement, DomElement } from "../../types/types";
+import { ComponentElement, DomElement, TextElement } from "../../types/types";
 import { createPublicInstance } from "../createPublicInstance";
 import { instantiate } from "../instantiate";
 import { updateDomProperties } from "../updateDomProperties";
@@ -42,33 +42,36 @@ describe("instantiate", () => {
           element: {
             type: "span"
           },
-          childInstances: []
+          childInstances: [],
+          parentElement: element,
         },
         {
           dom: expectedInstanceDomChild2,
           element: {
             type: "i"
           },
-          childInstances: []
+          childInstances: [],
+          parentElement: element,
         }
       ]
     };
 
-    const instance = instantiate({element});
+    const instance = instantiate({ element });
     expect(instance).toStrictEqual(expectedInstance);
   });
 
   test("instantiate a DOM element: text", () => {
     const element = {
       type: "TEXT_ELEMENT",
-      props: { nodeValue: "foo" }
-    };
+      props: { nodeValue: "foo" },
+      parentElement: {}
+    } as unknown as TextElement;
     const expectedInstance = {
       dom: document.createTextNode("foo"),
       element
     };
 
-    const instance = instantiate({element});
+    const instance = instantiate({ element });
 
     expect(instance).toStrictEqual(expectedInstance);
   });

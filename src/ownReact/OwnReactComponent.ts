@@ -12,7 +12,7 @@ export abstract class OwnReactComponent<
     P extends ComponentProps = ComponentProps, 
     S extends ComponentState = ComponentState
   > {
-  readonly props: P;
+  props: P;
   state: S;
   componentWillUnmount?: () => void;
   componentDidMount?: () => void;

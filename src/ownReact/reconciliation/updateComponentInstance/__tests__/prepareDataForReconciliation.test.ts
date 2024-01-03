@@ -8,13 +8,13 @@ describe("prepareDataForReconciliation", () => {
                 props: {
                     initialProp: "initialValue",
                 },
-                render: () => {},
+                render: () => ({}),
                 __internalInstance: {}
             },
             childInstance: {},
             element: {
                 type: class MockComponent {
-                    render: () => {}
+                    render = () => {};
                 },
                 props: {
                     initialProp: "initialValue",
@@ -37,15 +37,15 @@ describe("prepareDataForReconciliation", () => {
         const instance = {
             publicInstance: {
                 props: {},
-                render: () => {},
+                render: () => ({}),
             },
             childInstance: {
                 dom: {},
                 element: {
-                type: "div",
-                props: {
-                    className: "initialValue",
-                },
+                    type: "div",
+                    props: {
+                        className: "initialValue",
+                    },
                 },
                 childInstances: [],
             },
@@ -58,7 +58,7 @@ describe("prepareDataForReconciliation", () => {
 
         expect(result).toEqual({
             instance: instance.childInstance,
-            element: instance.publicInstance.render(),
+            element: { parentElement: element },
         });
     });
 });

@@ -13,7 +13,7 @@ type PrepareDataForReconciliation = (params: Params) => Result;
 export const prepareDataForReconciliation: PrepareDataForReconciliation = ({ instance, element }) => {
     instance.publicInstance.props = element.props;
 
-    const childElement = instance.publicInstance.render() as Element;
+    const childElement = instance.publicInstance.render() as unknown as Element;
     childElement.parentElement = element;
     const oldChildInstance = instance.childInstance;
 

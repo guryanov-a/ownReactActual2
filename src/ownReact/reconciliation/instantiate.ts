@@ -60,8 +60,8 @@ const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({
   return instance;
 });
 
-type InstantiateTextElement = (element: TextElement) => TextInstance;
-const instantiateTextElement: InstantiateTextElement = (element) => {
+type InstantiateTextElement = (params: { element: TextElement}) => TextInstance;
+const instantiateTextElement: InstantiateTextElement = withPerformanceDomChange(({ element }) => {
   const { props } = element;
   const dom = document.createTextNode(props?.nodeValue);
 
@@ -70,12 +70,12 @@ const instantiateTextElement: InstantiateTextElement = (element) => {
     element,
   };
   return instance;
-};
+});
 
 export type Instantiate = ({ element }: { element: Element }) => Instance | null;
 export const instantiate: Instantiate = ({ element }) => {
   if (isTextElement(element)) {
-    return instantiateTextElement(element);
+    return instantiateTextElement({ element });
   } else if (isDomElement(element)) {
     return instantiateDomElement({element});
   } else { // isComponentElement(element)

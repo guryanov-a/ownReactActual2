@@ -1,6 +1,7 @@
 import { instantiate } from "./instantiate";
 import { Element, Instance } from "../types/types";
 import { isComponentInstance } from "../types/is";
+import { withPerformanceDomChange } from "../utils/withPerformance";
 
 interface Params {
   container: HTMLElement;
