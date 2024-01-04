@@ -6,7 +6,7 @@ import { withPerformanceUpdate, withPerformanceDomChange } from "../utils/withPe
 
 interface InstantiateClassComponentParams { element: ComponentElement }
 type InstantiateClassComponent = ({ element }: InstantiateClassComponentParams) => ComponentInstance | null;
-const instantiateClassComponent: InstantiateClassComponent = withPerformanceUpdate(({ element }) => {
+export const instantiateClassComponent: InstantiateClassComponent = withPerformanceUpdate(({ element }) => {
   // create instance of a component
   const instance = {} as ComponentInstance;
   const publicInstance = createPublicInstance({ element, instance });
@@ -36,7 +36,7 @@ const instantiateClassComponent: InstantiateClassComponent = withPerformanceUpda
 }, 'Component create');
 
 type InstantiateDomElement = (params: { element: DomElement }) => DomInstance;
-const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({ element }) => {
+export const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({ element }) => {
   const { type, props = {} } = element;
   const domElement = document.createElement(type);
   const dom = updateDomProperties(domElement, [], props);
@@ -61,7 +61,7 @@ const instantiateDomElement: InstantiateDomElement = withPerformanceDomChange(({
 });
 
 type InstantiateTextElement = (params: { element: TextElement}) => TextInstance;
-const instantiateTextElement: InstantiateTextElement = withPerformanceDomChange(({ element }) => {
+export const instantiateTextElement: InstantiateTextElement = withPerformanceDomChange(({ element }) => {
   const { props } = element;
   const dom = document.createTextNode(props?.nodeValue);
 
@@ -77,7 +77,7 @@ export const instantiate: Instantiate = ({ element }) => {
   if (isTextElement(element)) {
     return instantiateTextElement({ element });
   } else if (isDomElement(element)) {
-    return instantiateDomElement({element});
+    return instantiateDomElement({ element });
   } else { // isComponentElement(element)
     return instantiateClassComponent({ element });
   }

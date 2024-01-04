@@ -1,18 +1,19 @@
 import { identity } from "ramda";
 import { OwnReactComponent } from "../../OwnReactComponent";
-import { ComponentElement, DomElement, TextElement } from "../../types/types";
+import { ComponentElement, DomElement, DomInstance, TextElement } from "../../types/types";
 import { createPublicInstance } from "../createPublicInstance";
-import { instantiate } from "../instantiate";
+import { instantiateDomElement } from "../instantiate";
 import { updateDomProperties } from "../updateDomProperties";
 
 vi.mock("../updateDomProperties");
 vi.mock("../createPublicInstance");
 vi.mock("../../utils/withPerformance")
+vi.mock('../instantiate');
 
 describe("instantiate", () => {
   vi.mocked(updateDomProperties).mockImplementation(identity);
 
-  test("instantiate a DOM element: HTML element", () => {
+  test("instantiate a DOM element: HTML element", async () => {
     const element = {
       type: "div",
       props: {
@@ -54,8 +55,11 @@ describe("instantiate", () => {
           parentElement: element,
         }
       ]
-    };
+    } as unknown as DomInstance;
 
+    vi.mocked(instantiateDomElement).mockReturnValue(expectedInstance);
+
+    const { instantiate } = await vi.importActual('../instantiate');
     const instance = instantiate({ element });
     expect(instance).toStrictEqual(expectedInstance);
   });
